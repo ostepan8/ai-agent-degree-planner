@@ -1,0 +1,387 @@
+/* PDF Export Styles - Branded Layout */
+
+/* Container - Hidden from screen until PDF generation */
+.pdfContainer {
+  position: fixed;
+  left: 0;
+  top: 0;
+  width: 210mm; /* A4 width */
+  min-height: 100vh;
+  background: #FFFFFF;
+  font-family: system-ui, -apple-system, sans-serif;
+  color: #101820;
+  padding: 20mm 15mm;
+  box-sizing: border-box;
+  z-index: -9999;
+  opacity: 0;
+  pointer-events: none;
+  overflow: visible;
+}
+
+/* Header Section */
+.header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  margin-bottom: 24px;
+  padding-bottom: 20px;
+  border-bottom: 3px solid #FF5C28;
+}
+
+.headerLeft {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.logoRow {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.logo {
+  width: 32px;
+  height: 32px;
+}
+
+.title {
+  font-size: 28px;
+  font-weight: 700;
+  color: #101820;
+  margin: 0;
+  letter-spacing: -0.5px;
+}
+
+.subtitle {
+  font-size: 16px;
+  color: #5A5A5A;
+  margin: 0;
+}
+
+.degreeInfo {
+  font-size: 14px;
+  color: #FF5C28;
+  font-weight: 600;
+  margin-top: 4px;
+}
+
+.headerRight {
+  text-align: right;
+}
+
+.generatedDate {
+  font-size: 12px;
+  color: #5A5A5A;
+  margin: 0;
+}
+
+/* Summary Stats Row */
+.summaryRow {
+  display: flex;
+  gap: 12px;
+  margin-bottom: 28px;
+}
+
+.summaryCard {
+  flex: 1;
+  background: linear-gradient(135deg, #FFF5F2 0%, #FFFFFF 100%);
+  border: 1px solid #FFE4DC;
+  border-radius: 10px;
+  padding: 14px 16px;
+  text-align: center;
+}
+
+.summaryValue {
+  display: block;
+  font-size: 22px;
+  font-weight: 700;
+  color: #FF5C28;
+  line-height: 1.2;
+}
+
+.summaryLabel {
+  display: block;
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.8px;
+  color: #5A5A5A;
+  margin-top: 4px;
+}
+
+/* Year Sections */
+.yearSection {
+  margin-bottom: 24px;
+  break-inside: avoid;
+  page-break-inside: avoid;
+}
+
+.yearHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: linear-gradient(90deg, #101820 0%, #1A2632 100%);
+  padding: 12px 16px;
+  border-radius: 10px 10px 0 0;
+  margin-bottom: 0;
+}
+
+.yearTitle {
+  font-size: 16px;
+  font-weight: 700;
+  color: #FFFFFF;
+  margin: 0;
+}
+
+.yearSubtitle {
+  font-size: 12px;
+  color: #F0F3EF;
+  opacity: 0.7;
+  margin-left: 8px;
+  font-weight: 400;
+}
+
+.yearCredits {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.coopBadge {
+  font-size: 10px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  padding: 4px 10px;
+  background: rgba(62, 208, 195, 0.2);
+  border: 1px solid #3ED0C3;
+  border-radius: 100px;
+  color: #3ED0C3;
+}
+
+.creditsLabel {
+  font-size: 13px;
+  color: #F0F3EF;
+  opacity: 0.9;
+}
+
+.yearContent {
+  background: #FAFBFA;
+  border: 1px solid #E8EBE7;
+  border-top: none;
+  border-radius: 0 0 10px 10px;
+  padding: 16px;
+}
+
+/* Semester Grid */
+.semesterGrid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 14px;
+}
+
+.semesterCard {
+  background: #FFFFFF;
+  border-radius: 8px;
+  padding: 14px;
+  border: 1px solid #E8EBE7;
+  break-inside: avoid;
+  page-break-inside: avoid;
+}
+
+/* Season-specific semester cards */
+.semesterFall {
+  border-left: 4px solid #FF5C28;
+  background: linear-gradient(135deg, #FFFAF8 0%, #FFFFFF 100%);
+}
+
+.semesterSpring {
+  border-left: 4px solid #3ED0C3;
+  background: linear-gradient(135deg, #F8FEFD 0%, #FFFFFF 100%);
+}
+
+.semesterSummer {
+  border-left: 4px solid #FFC107;
+  background: linear-gradient(135deg, #FFFDF5 0%, #FFFFFF 100%);
+}
+
+.semesterHeader {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 12px;
+  padding-bottom: 8px;
+  border-bottom: 1px solid #E8EBE7;
+}
+
+.semesterIcon {
+  font-size: 14px;
+}
+
+.semesterTitle {
+  font-size: 13px;
+  font-weight: 700;
+  color: #101820;
+  margin: 0;
+  flex: 1;
+}
+
+.semesterCreditsTotal {
+  font-size: 11px;
+  font-weight: 600;
+  color: #5A5A5A;
+  background: #F0F3EF;
+  padding: 2px 8px;
+  border-radius: 4px;
+}
+
+/* Course List */
+.courseList {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.courseRow {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  font-size: 11px;
+  padding: 4px 0;
+}
+
+.courseCode {
+  font-weight: 600;
+  color: #FF5C28;
+  min-width: 70px;
+  flex-shrink: 0;
+}
+
+.courseName {
+  flex: 1;
+  color: #101820;
+  padding: 0 8px;
+  line-height: 1.3;
+}
+
+.courseCredits {
+  color: #5A5A5A;
+  flex-shrink: 0;
+  text-align: right;
+}
+
+.courseOptions {
+  display: block;
+  font-size: 9px;
+  color: #3ED0C3;
+  font-style: italic;
+  margin-top: 2px;
+}
+
+/* Co-op Card */
+.coopCard {
+  background: linear-gradient(135deg, #F0FFFE 0%, #FFFFFF 100%);
+  border: 1px solid #3ED0C3;
+  border-left: 4px solid #3ED0C3;
+  border-radius: 8px;
+  padding: 14px;
+  text-align: center;
+}
+
+.coopTitle {
+  font-size: 13px;
+  font-weight: 700;
+  color: #101820;
+  margin: 0 0 4px 0;
+}
+
+.coopNumber {
+  font-size: 11px;
+  color: #3ED0C3;
+  font-weight: 600;
+}
+
+.coopDesc {
+  font-size: 10px;
+  color: #5A5A5A;
+  margin: 6px 0 0 0;
+}
+
+/* Footer Section */
+.footer {
+  margin-top: 32px;
+  padding-top: 16px;
+  border-top: 1px solid #E8EBE7;
+}
+
+.sourceNote {
+  font-size: 10px;
+  color: #3ED0C3;
+  margin: 0 0 8px 0;
+}
+
+.sourceLink {
+  color: #3ED0C3;
+  text-decoration: none;
+}
+
+.advisorNote {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  font-size: 10px;
+  color: #5A5A5A;
+  background: #FAFBFA;
+  border: 1px solid #E8EBE7;
+  border-radius: 6px;
+  padding: 10px 12px;
+  margin: 0;
+  line-height: 1.5;
+}
+
+.advisorIcon {
+  flex-shrink: 0;
+  width: 14px;
+  height: 14px;
+  color: #5A5A5A;
+}
+
+/* Warnings Box */
+.warningsBox {
+  background: #FFFBF0;
+  border: 1px solid #FFE4A8;
+  border-radius: 8px;
+  padding: 14px;
+  margin-bottom: 16px;
+}
+
+.warningsTitle {
+  font-size: 12px;
+  font-weight: 700;
+  color: #B8860B;
+  margin: 0 0 8px 0;
+}
+
+.warningsList {
+  margin: 0;
+  padding-left: 18px;
+}
+
+.warningItem {
+  font-size: 10px;
+  color: #5A5A5A;
+  margin-bottom: 4px;
+  line-height: 1.4;
+}
+
+/* Page break helpers */
+.pageBreak {
+  break-after: page;
+  page-break-after: always;
+}
+
+.avoidBreak {
+  break-inside: avoid;
+  page-break-inside: avoid;
+}
+

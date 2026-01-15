@@ -1,0 +1,5797 @@
+.container {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  background: var(--color-primary-black);
+}
+
+/* Staggered Reveal Animations */
+@keyframes fadeSlideUp {
+  from {
+    opacity: 0;
+    transform: translateY(24px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+.stagger {
+  opacity: 0;
+  animation: fadeSlideUp 0.5s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+}
+
+.stagger1 { animation-delay: 0s; }
+.stagger2 { animation-delay: 0.08s; }
+.stagger3 { animation-delay: 0.16s; }
+.stagger4 { animation-delay: 0.24s; }
+.stagger5 { animation-delay: 0.32s; }
+.stagger6 { animation-delay: 0.4s; }
+.stagger7 { animation-delay: 0.48s; }
+.stagger8 { animation-delay: 0.56s; }
+
+/* Card animation wrapper */
+.animatedCard {
+  opacity: 0;
+  animation: fadeSlideUp 0.6s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+}
+
+/* Animate children within cards */
+.animatedCard > * {
+  opacity: 0;
+  animation: fadeSlideUp 0.5s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+}
+
+.animatedCard > *:nth-child(1) { animation-delay: 0.1s; }
+.animatedCard > *:nth-child(2) { animation-delay: 0.18s; }
+.animatedCard > *:nth-child(3) { animation-delay: 0.26s; }
+.animatedCard > *:nth-child(4) { animation-delay: 0.34s; }
+.animatedCard > *:nth-child(5) { animation-delay: 0.42s; }
+.animatedCard > *:nth-child(6) { animation-delay: 0.5s; }
+.animatedCard > *:nth-child(7) { animation-delay: 0.58s; }
+.animatedCard > *:nth-child(8) { animation-delay: 0.66s; }
+.animatedCard > *:nth-child(9) { animation-delay: 0.74s; }
+.animatedCard > *:nth-child(10) { animation-delay: 0.82s; }
+
+/* Header */
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1rem 2rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  background: rgba(16, 24, 32, 0.95);
+  backdrop-filter: blur(10px);
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+
+.backLink {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-family: var(--font-body);
+  font-size: 0.9rem;
+  font-weight: 500;
+  color: var(--color-background-cream);
+  text-decoration: none;
+  opacity: 0.7;
+  transition: all 0.2s ease;
+  min-width: 100px;
+}
+
+.backLink:hover {
+  opacity: 1;
+  color: var(--color-primary-orange);
+}
+
+.headerCenter {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+.headerSpacer {
+  width: 100px;
+}
+
+.disconnectBtn {
+  font-family: var(--font-body);
+  font-size: 0.85rem;
+  font-weight: 500;
+  color: var(--color-background-cream);
+  opacity: 0.6;
+  background: transparent;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  padding: 0.5rem 1rem;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.disconnectBtn:hover {
+  opacity: 1;
+  border-color: var(--color-primary-orange);
+  color: var(--color-primary-orange);
+}
+
+/* Toolbar */
+.toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 0.75rem;
+  padding: 0.75rem 2rem;
+  background: rgba(16, 24, 32, 0.8);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+  flex-shrink: 0;
+  margin-top: 62px; /* Height of fixed navbar */
+}
+
+.startOverBtn {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-family: var(--font-body);
+  font-size: 0.85rem;
+  font-weight: 500;
+  color: var(--color-background-cream);
+  opacity: 0.7;
+  background: transparent;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  padding: 0.5rem 1rem;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.startOverBtn:hover {
+  opacity: 1;
+  border-color: var(--color-primary-orange);
+  color: var(--color-primary-orange);
+}
+
+.validateBtn {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-family: var(--font-body);
+  font-size: 0.85rem;
+  font-weight: 500;
+  color: var(--color-background-cream);
+  background: rgba(34, 197, 94, 0.15);
+  border: 1px solid rgba(34, 197, 94, 0.4);
+  padding: 0.5rem 1rem;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.validateBtn:hover {
+  background: rgba(34, 197, 94, 0.25);
+  border-color: rgba(34, 197, 94, 0.7);
+  color: #22c55e;
+}
+
+.validateBtn svg {
+  color: #22c55e;
+}
+
+/* Main */
+.main {
+  flex: 1;
+  display: flex;
+}
+
+/* Center Section (for cards) */
+.centerSection {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem;
+}
+
+/* Card */
+.card {
+  max-width: 480px;
+  width: 100%;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 24px;
+  padding: 3rem;
+  text-align: center;
+}
+
+.researchCard {
+  max-width: 560px;
+  width: 100%;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 24px;
+  padding: 3rem;
+  text-align: center;
+}
+
+.cardIcon {
+  margin-bottom: 1.5rem;
+}
+
+.cardTitle {
+  font-family: var(--font-heading);
+  font-size: 1.75rem;
+  font-weight: 700;
+  color: var(--color-background-cream);
+  margin-bottom: 0.75rem;
+}
+
+.cardDesc {
+  font-size: 1rem;
+  line-height: 1.6;
+  color: var(--color-background-cream);
+  opacity: 0.6;
+  margin-bottom: 2rem;
+}
+
+.cardDesc strong {
+  color: var(--color-primary-orange);
+  font-weight: 600;
+}
+
+/* Time estimate for loading screen */
+.timeEstimate {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-family: var(--font-mono);
+  font-size: 0.85rem;
+  color: var(--color-secondary-teal);
+  background: rgba(62, 208, 195, 0.1);
+  border: 1px solid rgba(62, 208, 195, 0.2);
+  border-radius: 100px;
+  padding: 0.5rem 1rem;
+  margin-bottom: 1.5rem;
+}
+
+/* Step Indicator */
+.stepIndicator {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  margin-bottom: 2rem;
+}
+
+.stepActive {
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--font-mono);
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: var(--color-primary-black);
+  background: var(--color-primary-orange);
+  border-radius: 50%;
+}
+
+.stepComplete {
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.9rem;
+  color: var(--color-primary-black);
+  background: var(--color-accent-green);
+  border-radius: 50%;
+}
+
+.stepInactive {
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--font-mono);
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: var(--color-background-cream);
+  opacity: 0.3;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 50%;
+}
+
+.stepLine {
+  width: 24px;
+  height: 2px;
+  background: rgba(255, 255, 255, 0.15);
+}
+
+.stepLineComplete {
+  width: 24px;
+  height: 2px;
+  background: var(--color-accent-green);
+}
+
+/* School Badge */
+.schoolBadge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem 1rem;
+  background: rgba(255, 92, 40, 0.1);
+  border: 1px solid rgba(255, 92, 40, 0.2);
+  border-radius: 100px;
+  font-size: 0.9rem;
+  font-weight: 500;
+  color: var(--color-primary-orange);
+  margin-bottom: 1.5rem;
+}
+
+/* Input */
+.inputWrapper {
+  position: relative;
+  margin-bottom: 1rem;
+}
+
+.input {
+  width: 100%;
+  padding: 1rem 3rem 1rem 1.25rem;
+  font-family: var(--font-mono);
+  font-size: 0.95rem;
+  color: var(--color-background-cream);
+  background: rgba(0, 0, 0, 0.3);
+  border: 2px solid rgba(255, 255, 255, 0.1);
+  border-radius: 12px;
+  outline: none;
+  transition: all 0.2s ease;
+}
+
+.input::placeholder {
+  color: rgba(240, 243, 239, 0.3);
+  font-family: var(--font-body);
+}
+
+.input:focus {
+  border-color: var(--color-primary-orange);
+  background: rgba(0, 0, 0, 0.4);
+}
+
+/* Context Fields Section */
+.contextFieldsSection {
+  margin-top: 1.5rem;
+  padding-top: 1.5rem;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.contextFieldsLabel {
+  font-family: var(--font-body);
+  font-size: 0.85rem;
+  color: rgba(240, 243, 239, 0.6);
+  margin-bottom: 1rem;
+}
+
+.contextFieldsGrid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+
+.contextField {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+
+.contextField label {
+  font-family: var(--font-body);
+  font-size: 0.8rem;
+  color: rgba(240, 243, 239, 0.5);
+}
+
+.inputSmall {
+  width: 100%;
+  padding: 0.6rem 0.8rem;
+  font-family: var(--font-mono);
+  font-size: 0.85rem;
+  color: var(--color-background-cream);
+  background: rgba(0, 0, 0, 0.25);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 8px;
+  outline: none;
+  transition: all 0.2s ease;
+}
+
+.inputSmall::placeholder {
+  color: rgba(240, 243, 239, 0.3);
+  font-family: var(--font-body);
+  font-size: 0.8rem;
+}
+
+.inputSmall:focus {
+  border-color: var(--color-primary-orange);
+  background: rgba(0, 0, 0, 0.35);
+}
+
+.selectSmall {
+  width: 100%;
+  padding: 0.6rem 0.8rem;
+  font-family: var(--font-body);
+  font-size: 0.85rem;
+  color: var(--color-background-cream);
+  background: rgba(0, 0, 0, 0.25);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 8px;
+  outline: none;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.selectSmall:focus {
+  border-color: var(--color-primary-orange);
+}
+
+.contextFieldsRow {
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+  flex-wrap: wrap;
+}
+
+.checkboxLabel {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-family: var(--font-body);
+  font-size: 0.85rem;
+  color: rgba(240, 243, 239, 0.7);
+  cursor: pointer;
+}
+
+.checkboxLabel input[type="checkbox"] {
+  width: 16px;
+  height: 16px;
+  accent-color: var(--color-primary-orange);
+  cursor: pointer;
+}
+
+.checkboxLabel span {
+  user-select: none;
+}
+
+.toggleVisibility {
+  position: absolute;
+  right: 1rem;
+  top: 50%;
+  transform: translateY(-50%);
+  background: none;
+  border: none;
+  color: var(--color-background-cream);
+  opacity: 0.5;
+  cursor: pointer;
+  padding: 0.25rem;
+  transition: opacity 0.2s ease;
+}
+
+.toggleVisibility:hover {
+  opacity: 1;
+}
+
+/* Buttons */
+.primaryButton {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 1rem;
+  font-family: var(--font-body);
+  font-size: 1.05rem;
+  font-weight: 600;
+  color: var(--color-primary-black);
+  background: var(--color-primary-orange);
+  border: none;
+  border-radius: 12px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.primaryButton:hover:not(:disabled) {
+  background: var(--color-secondary-orange);
+  transform: translateY(-2px);
+  box-shadow: 0 10px 30px rgba(255, 92, 40, 0.3);
+}
+
+.primaryButton:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.buttonArrow {
+  transition: transform 0.2s ease;
+}
+
+.primaryButton:hover:not(:disabled) .buttonArrow {
+  transform: translateX(4px);
+}
+
+.secondaryButton {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 1rem 1.5rem;
+  font-family: var(--font-body);
+  font-size: 1rem;
+  font-weight: 500;
+  color: var(--color-background-cream);
+  background: transparent;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 12px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.secondaryButton:hover {
+  border-color: var(--color-background-cream);
+  background: rgba(255, 255, 255, 0.05);
+}
+
+/* Help Section */
+.helpSection {
+  margin-top: 2rem;
+  padding-top: 2rem;
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.helpSection p {
+  font-size: 0.9rem;
+  color: var(--color-background-cream);
+  opacity: 0.5;
+  margin-bottom: 0.5rem;
+}
+
+.helpLink {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-size: 0.95rem;
+  font-weight: 500;
+  color: var(--color-primary-orange);
+  text-decoration: none;
+  transition: all 0.2s ease;
+}
+
+.helpLink:hover {
+  color: var(--color-secondary-orange);
+}
+
+.disclaimer {
+  font-size: 0.85rem;
+  color: var(--color-background-cream);
+  opacity: 0.4;
+  margin-top: 1.5rem;
+  line-height: 1.5;
+}
+
+/* File Upload */
+.uploadArea {
+  border: 2px dashed rgba(255, 255, 255, 0.15);
+  border-radius: 16px;
+  padding: 2.5rem 2rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  text-align: center;
+}
+
+.uploadArea:hover {
+  border-color: var(--color-primary-orange);
+  background: rgba(255, 92, 40, 0.05);
+}
+
+.uploadAreaActive {
+  border-color: var(--color-accent-green);
+  background: rgba(181, 232, 0, 0.05);
+}
+
+.fileInput {
+  display: none;
+}
+
+.uploadIcon {
+  color: var(--color-background-cream);
+  opacity: 0.4;
+  margin-bottom: 1rem;
+}
+
+.uploadIconSuccess {
+  color: var(--color-accent-green);
+  margin-bottom: 1rem;
+}
+
+.uploadText {
+  font-size: 1rem;
+  font-weight: 500;
+  color: var(--color-background-cream);
+  margin-bottom: 0.25rem;
+}
+
+.uploadFileName {
+  font-family: var(--font-mono);
+  font-size: 0.9rem;
+  color: var(--color-accent-green);
+  margin-bottom: 0.25rem;
+}
+
+.uploadHint {
+  font-size: 0.85rem;
+  color: var(--color-background-cream);
+  opacity: 0.4;
+}
+
+/* Or Divider */
+.orDivider {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin: 1.5rem 0;
+}
+
+.orDivider::before,
+.orDivider::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.orDivider span {
+  font-size: 0.85rem;
+  color: var(--color-background-cream);
+  opacity: 0.4;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+}
+
+/* Freshman Button */
+.freshmanButton {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  width: 100%;
+  padding: 1.25rem;
+  background: rgba(255, 255, 255, 0.03);
+  border: 2px solid rgba(255, 255, 255, 0.1);
+  border-radius: 12px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  text-align: left;
+}
+
+.freshmanButton:hover {
+  border-color: rgba(255, 255, 255, 0.2);
+  background: rgba(255, 255, 255, 0.05);
+}
+
+.freshmanButtonActive {
+  border-color: var(--color-accent-green);
+  background: rgba(181, 232, 0, 0.08);
+}
+
+.freshmanCheck {
+  width: 24px;
+  height: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 2px solid rgba(255, 255, 255, 0.2);
+  border-radius: 6px;
+  font-size: 0.9rem;
+  color: var(--color-accent-green);
+  flex-shrink: 0;
+}
+
+.freshmanButtonActive .freshmanCheck {
+  border-color: var(--color-accent-green);
+  background: var(--color-accent-green);
+  color: var(--color-primary-black);
+}
+
+.freshmanText {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.freshmanText strong {
+  font-size: 1rem;
+  color: var(--color-background-cream);
+}
+
+.freshmanText span {
+  font-size: 0.85rem;
+  color: var(--color-background-cream);
+  opacity: 0.5;
+}
+
+/* Transcript Footer */
+.transcriptFooter {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-top: 2rem;
+}
+
+.transcriptFooter .primaryButton {
+  width: auto;
+  padding: 1rem 2rem;
+}
+
+/* Privacy Note */
+.privacyNote {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  font-size: 0.8rem;
+  color: var(--color-background-cream);
+  opacity: 0.4;
+  margin-top: 1.5rem;
+}
+
+/* Completed Summary */
+.completedSummary {
+  background: rgba(181, 232, 0, 0.08);
+  border: 1px solid rgba(181, 232, 0, 0.2);
+  border-radius: 12px;
+  padding: 1.25rem;
+  margin-bottom: 1.5rem;
+  text-align: left;
+}
+
+.completedHeader {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: var(--color-accent-green);
+  margin-bottom: 1rem;
+}
+
+.completedGrid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.completedCourse {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.4rem 0.75rem;
+  background: rgba(0, 0, 0, 0.2);
+  border-radius: 6px;
+}
+
+.completedCode {
+  font-family: var(--font-mono);
+  font-size: 0.8rem;
+  color: var(--color-background-cream);
+}
+
+.completedGrade {
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  color: var(--color-accent-green);
+  font-weight: 600;
+}
+
+/* Progress Bar */
+.progressBar {
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 12px;
+  padding: 1rem 1.25rem;
+  margin-bottom: 2rem;
+}
+
+.progressHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0.75rem;
+  font-size: 0.9rem;
+  color: var(--color-background-cream);
+}
+
+.progressHeader span:last-child {
+  font-family: var(--font-mono);
+  color: var(--color-accent-green);
+}
+
+.progressTrack {
+  height: 8px;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.progressFill {
+  height: 100%;
+  background: linear-gradient(90deg, var(--color-accent-green), var(--color-secondary-teal));
+  border-radius: 4px;
+  transition: width 0.5s ease;
+}
+
+/* Completed Semester */
+.completedSemester {
+  background: rgba(181, 232, 0, 0.08);
+  border: 1px solid rgba(181, 232, 0, 0.2);
+  border-radius: 12px;
+  padding: 1rem;
+}
+
+.completedBadge {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: var(--color-accent-green);
+  margin-bottom: 0.75rem;
+}
+
+.completedCoursesList {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+}
+
+.completedTag {
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  padding: 0.25rem 0.5rem;
+  background: rgba(0, 0, 0, 0.2);
+  border-radius: 4px;
+  color: var(--color-background-cream);
+}
+
+.completedMore {
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  padding: 0.25rem 0.5rem;
+  color: var(--color-accent-green);
+}
+
+/* Source Note */
+.sourceNote {
+  margin-top: 1rem;
+  font-size: 0.85rem;
+  color: var(--color-secondary-teal);
+}
+
+.sourceNote strong {
+  color: var(--color-secondary-teal);
+}
+
+/* Schedule Actions */
+.scheduleActions {
+  display: flex;
+  gap: 0.75rem;
+}
+
+.savePdfButton {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.75rem 1.25rem;
+  font-family: var(--font-body);
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: var(--color-primary-black);
+  background: var(--color-accent-green);
+  border: none;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.savePdfButton:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(181, 232, 0, 0.3);
+}
+
+.savePdfButton:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+  transform: none;
+}
+
+/* Edit Hint */
+.editHint {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  font-size: 0.85rem;
+  color: var(--color-background-cream);
+  opacity: 0.5;
+  margin-bottom: 1.5rem;
+}
+
+/* Semester Cards - Fall vs Spring */
+.semesterCardFall {
+  background: linear-gradient(135deg, rgba(255, 140, 66, 0.08) 0%, rgba(255, 92, 40, 0.04) 100%);
+  border: 1px solid rgba(255, 140, 66, 0.2);
+  border-left: 4px solid var(--color-primary-orange);
+  border-radius: 12px;
+  padding: 1rem;
+  cursor: default;
+  transition: all 0.3s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.semesterCardFall:hover {
+  box-shadow: 0 12px 28px rgba(255, 92, 40, 0.18);
+  border-color: var(--color-primary-orange);
+}
+
+.semesterCardFall:hover .editIcon {
+  opacity: 1;
+}
+
+.semesterCardSpring {
+  background: linear-gradient(135deg, rgba(62, 208, 195, 0.08) 0%, rgba(62, 208, 195, 0.04) 100%);
+  border: 1px solid rgba(62, 208, 195, 0.2);
+  border-left: 4px solid var(--color-secondary-teal);
+  border-radius: 12px;
+  padding: 1rem;
+  cursor: default;
+  transition: all 0.3s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.semesterCardSpring:hover {
+  box-shadow: 0 12px 28px rgba(62, 208, 195, 0.18);
+  border-color: var(--color-secondary-teal);
+}
+
+.semesterCardSpring:hover .editIcon {
+  opacity: 1;
+}
+
+.semesterHeader {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 0.75rem;
+}
+
+.semesterIcon {
+  font-size: 1rem;
+}
+
+.semesterHeader .semesterTitle {
+  flex: 1;
+  margin: 0;
+}
+
+.editIcon {
+  font-size: 0.85rem;
+  color: var(--color-background-cream);
+  opacity: 0;
+  transition: opacity 0.2s ease;
+}
+
+/* Updated semester card styles */
+.semesterCard {
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 12px;
+  padding: 1rem;
+}
+
+.semesterCardFinal {
+  background: linear-gradient(135deg, rgba(181, 232, 0, 0.1) 0%, rgba(181, 232, 0, 0.05) 100%);
+  border: 1px solid rgba(181, 232, 0, 0.25);
+  border-left: 4px solid var(--color-accent-green);
+  border-radius: 12px;
+  padding: 1rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.semesterCardFinal:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 24px rgba(181, 232, 0, 0.15);
+}
+
+.semesterCardFinal:hover .editIcon {
+  opacity: 1;
+}
+
+/* Co-op card update */
+.coopCard {
+  background: rgba(62, 208, 195, 0.08);
+  border: 1px solid rgba(62, 208, 195, 0.2);
+  border-radius: 12px;
+  padding: 1rem;
+  transition: all 0.3s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.coopCard:hover {
+  box-shadow: 0 12px 28px rgba(62, 208, 195, 0.15);
+  border-color: var(--color-secondary-teal);
+}
+
+.coopCard .semesterHeader {
+  margin-bottom: 0.5rem;
+}
+
+.coopBadge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-family: var(--font-mono);
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: var(--color-secondary-teal);
+}
+
+.coopDescription {
+  font-size: 0.8rem;
+  color: var(--color-background-cream);
+  opacity: 0.6;
+  margin: 0.5rem 0 0 0;
+}
+
+/* Summer semester card */
+.semesterCardSummer {
+  background: linear-gradient(135deg, rgba(255, 193, 7, 0.08) 0%, rgba(255, 193, 7, 0.04) 100%);
+  border: 1px solid rgba(255, 193, 7, 0.2);
+  border-left: 4px solid #ffc107;
+  border-radius: 12px;
+  padding: 1rem;
+  cursor: default;
+  transition: all 0.3s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.semesterCardSummer:hover {
+  box-shadow: 0 12px 28px rgba(255, 193, 7, 0.18);
+  border-color: #ffc107;
+}
+
+.semesterCardSummer:hover .editIcon {
+  opacity: 1;
+}
+
+/* ============================================
+   ADD TERM SECTION
+   ============================================ */
+
+.addTermSection {
+  margin-bottom: 1.5rem;
+}
+
+.addTermButton {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.75rem 1.25rem;
+  font-family: var(--font-body);
+  font-size: 0.9rem;
+  font-weight: 500;
+  color: var(--color-background-cream);
+  background: transparent;
+  border: 1px dashed rgba(255, 255, 255, 0.2);
+  border-radius: 12px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.addTermButton:hover {
+  border-color: var(--color-primary-orange);
+  color: var(--color-primary-orange);
+  background: rgba(255, 92, 40, 0.05);
+}
+
+.addTermButton svg {
+  opacity: 0.7;
+}
+
+.addTermForm {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.75rem 1rem;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 12px;
+}
+
+.addTermSelect {
+  padding: 0.5rem 0.75rem;
+  font-family: var(--font-body);
+  font-size: 0.9rem;
+  color: var(--color-background-cream);
+  background: rgba(0, 0, 0, 0.3);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: 8px;
+  cursor: pointer;
+  outline: none;
+}
+
+.addTermSelect:focus {
+  border-color: var(--color-primary-orange);
+}
+
+.addTermSelect option {
+  background: var(--color-primary-black);
+}
+
+.addTermInput {
+  width: 80px;
+  padding: 0.5rem 0.75rem;
+  font-family: var(--font-mono);
+  font-size: 0.9rem;
+  color: var(--color-background-cream);
+  background: rgba(0, 0, 0, 0.3);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: 8px;
+  outline: none;
+}
+
+.addTermInput:focus {
+  border-color: var(--color-primary-orange);
+}
+
+.addTermConfirm {
+  padding: 0.5rem 1rem;
+  font-family: var(--font-body);
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--color-primary-black);
+  background: var(--color-accent-green);
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.addTermConfirm:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(181, 232, 0, 0.3);
+}
+
+.addTermCancel {
+  padding: 0.5rem 1rem;
+  font-family: var(--font-body);
+  font-size: 0.85rem;
+  font-weight: 500;
+  color: var(--color-background-cream);
+  opacity: 0.7;
+  background: transparent;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.addTermCancel:hover {
+  opacity: 1;
+  border-color: rgba(255, 255, 255, 0.3);
+}
+
+/* ============================================
+   YEAR-BASED SCHEDULE LAYOUT
+   ============================================ */
+
+.yearRows {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+  margin-bottom: 2rem;
+}
+
+.yearRow {
+  background: rgba(255, 255, 255, 0.02);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  border-radius: 16px;
+  padding: 1.25rem;
+}
+
+.yearRowHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 1rem;
+  padding-bottom: 0.75rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.yearRowTitle {
+  display: flex;
+  align-items: baseline;
+  gap: 0.75rem;
+}
+
+.yearRowTitle h3 {
+  font-family: var(--font-heading);
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: var(--color-background-cream);
+  margin: 0;
+}
+
+.yearRowTitle span {
+  font-family: var(--font-mono);
+  font-size: 0.8rem;
+  color: var(--color-background-cream);
+  opacity: 0.4;
+}
+
+.yearRowMeta {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.yearRowCredits {
+  font-family: var(--font-mono);
+  font-size: 0.85rem;
+  color: var(--color-background-cream);
+  opacity: 0.6;
+}
+
+.yearRowCoopBadge {
+  font-family: var(--font-mono);
+  font-size: 0.7rem;
+  font-weight: 600;
+  padding: 0.25rem 0.6rem;
+  background: rgba(62, 208, 195, 0.15);
+  border: 1px solid rgba(62, 208, 195, 0.3);
+  border-radius: 100px;
+  color: var(--color-secondary-teal);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.yearRowSemesters {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 1rem;
+}
+
+@media (max-width: 900px) {
+  .yearRowSemesters {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* Add Course Button */
+.addCourseButton {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.4rem;
+  width: 100%;
+  padding: 0.6rem;
+  margin-top: 0.5rem;
+  font-family: var(--font-body);
+  font-size: 0.8rem;
+  font-weight: 500;
+  color: var(--color-background-cream);
+  opacity: 0.5;
+  background: transparent;
+  border: 1px dashed rgba(255, 255, 255, 0.15);
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.addCourseButton:hover {
+  opacity: 1;
+  color: var(--color-accent-green);
+  border-color: rgba(181, 232, 0, 0.4);
+  background: rgba(181, 232, 0, 0.05);
+}
+
+.addCourseButton svg {
+  opacity: 0.7;
+}
+
+/* Add Course Form (inline) */
+.addCourseForm {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  padding: 0.75rem;
+  margin-top: 0.5rem;
+  background: rgba(181, 232, 0, 0.05);
+  border: 1px solid rgba(181, 232, 0, 0.2);
+  border-radius: 8px;
+}
+
+.addCourseRow {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.addCourseInput {
+  flex: 1;
+  padding: 0.5rem 0.75rem;
+  font-family: var(--font-mono);
+  font-size: 0.85rem;
+  color: var(--color-background-cream);
+  background: rgba(0, 0, 0, 0.3);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: 6px;
+  outline: none;
+}
+
+.addCourseInput::placeholder {
+  color: rgba(240, 243, 239, 0.3);
+  font-family: var(--font-body);
+}
+
+.addCourseInput:focus {
+  border-color: var(--color-accent-green);
+}
+
+.addCourseInputSmall {
+  width: 60px;
+  flex: none;
+}
+
+.addCourseActions {
+  display: flex;
+  gap: 0.5rem;
+  justify-content: flex-end;
+}
+
+.addCourseConfirm {
+  padding: 0.4rem 0.75rem;
+  font-family: var(--font-body);
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: var(--color-primary-black);
+  background: var(--color-accent-green);
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.addCourseConfirm:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(181, 232, 0, 0.3);
+}
+
+.addCourseCancel {
+  padding: 0.4rem 0.75rem;
+  font-family: var(--font-body);
+  font-size: 0.8rem;
+  font-weight: 500;
+  color: var(--color-background-cream);
+  opacity: 0.7;
+  background: transparent;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.addCourseCancel:hover {
+  opacity: 1;
+  border-color: rgba(255, 255, 255, 0.3);
+}
+
+/* Edit Course Form (inline) */
+.editCourseForm {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  padding: 0.75rem;
+  margin-bottom: 0.5rem;
+  background: rgba(62, 208, 195, 0.08);
+  border: 1px solid rgba(62, 208, 195, 0.3);
+  border-radius: 8px;
+  animation: editFormAppear 0.2s ease-out;
+  position: relative;
+  z-index: 10;
+}
+
+@keyframes editFormAppear {
+  from {
+    opacity: 0;
+    transform: scale(0.98);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+.editCourseRow {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.editCourseInput {
+  flex: 1;
+  padding: 0.5rem 0.75rem;
+  font-family: var(--font-mono);
+  font-size: 0.85rem;
+  color: var(--color-background-cream);
+  background: rgba(0, 0, 0, 0.3);
+  border: 1px solid rgba(62, 208, 195, 0.25);
+  border-radius: 6px;
+  outline: none;
+}
+
+.editCourseInput::placeholder {
+  color: rgba(240, 243, 239, 0.3);
+  font-family: var(--font-body);
+}
+
+.editCourseInput:focus {
+  border-color: var(--color-secondary-teal);
+  box-shadow: 0 0 0 2px rgba(62, 208, 195, 0.15);
+}
+
+.editCourseInputSmall {
+  width: 60px;
+  flex: none;
+}
+
+.editCourseActions {
+  display: flex;
+  gap: 0.5rem;
+  justify-content: flex-end;
+}
+
+.editCourseSave {
+  padding: 0.4rem 0.75rem;
+  font-family: var(--font-body);
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: var(--color-primary-black);
+  background: var(--color-secondary-teal);
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.editCourseSave:hover:not(:disabled) {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(62, 208, 195, 0.3);
+}
+
+.editCourseSave:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.editCourseCancel {
+  padding: 0.4rem 0.75rem;
+  font-family: var(--font-body);
+  font-size: 0.8rem;
+  font-weight: 500;
+  color: var(--color-background-cream);
+  opacity: 0.7;
+  background: transparent;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.editCourseCancel:hover {
+  opacity: 1;
+  border-color: rgba(255, 255, 255, 0.3);
+}
+
+/* Legacy flat grid - keep for compatibility */
+.allSemestersGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 1rem;
+  margin-bottom: 2rem;
+  position: relative;
+  z-index: 1;
+}
+
+/* Term delete button */
+.termDeleteButton {
+  position: absolute;
+  top: 0.5rem;
+  right: 0.5rem;
+  width: 24px;
+  height: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(255, 92, 40, 0.1);
+  border: 1px solid rgba(255, 92, 40, 0.3);
+  border-radius: 6px;
+  color: var(--color-primary-orange);
+  cursor: pointer;
+  opacity: 0;
+  transition: all 0.2s ease;
+  z-index: 5;
+}
+
+.semesterCardFall:hover .termDeleteButton,
+.semesterCardSpring:hover .termDeleteButton,
+.semesterCardSummer:hover .termDeleteButton,
+.coopCard:hover .termDeleteButton {
+  opacity: 0.7;
+}
+
+.termDeleteButton:hover {
+  opacity: 1 !important;
+  background: rgba(255, 92, 40, 0.25);
+  border-color: var(--color-primary-orange);
+  transform: scale(1.1);
+}
+
+/* Position relative for semester cards */
+.semesterCardFall,
+.semesterCardSpring,
+.semesterCardSummer,
+.coopCard {
+  position: relative;
+}
+
+/* Year title with subtitle */
+.yearTitle {
+  font-family: var(--font-heading);
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: var(--color-background-cream);
+  margin-bottom: 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.yearSubtitle {
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  font-weight: 400;
+  color: var(--color-background-cream);
+  opacity: 0.5;
+}
+
+/* Enhanced course display */
+.courseItem {
+  background: rgba(255, 255, 255, 0.03);
+  border-radius: 8px;
+  padding: 0.6rem 2.25rem 0.6rem 0.75rem;
+  margin-bottom: 0.5rem;
+  transition: all 0.25s cubic-bezier(0.22, 1, 0.36, 1);
+  border: 1px solid transparent;
+  position: relative;
+  z-index: 1;
+}
+
+.courseItem:hover {
+  background: rgba(255, 255, 255, 0.06);
+}
+
+.courseItem:last-child {
+  margin-bottom: 0;
+}
+
+/* Draggable course item */
+.courseItemDraggable {
+  cursor: grab;
+  user-select: none;
+}
+
+.courseItemDraggable:active {
+  cursor: grabbing;
+}
+
+.courseItemDraggable:hover {
+  border-color: rgba(255, 255, 255, 0.1);
+  transform: translateX(2px);
+}
+
+.courseItemDraggable:hover .dragHandle {
+  opacity: 0.6;
+}
+
+.courseItemDragging {
+  opacity: 0.4;
+  border-color: var(--color-primary-orange) !important;
+  background: rgba(255, 92, 40, 0.1) !important;
+}
+
+/* Drag handle */
+.dragHandle {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--color-background-cream);
+  opacity: 0.2;
+  margin-right: 0.5rem;
+  transition: opacity 0.2s ease;
+  flex-shrink: 0;
+}
+
+/* Course pending delete */
+.courseItemPendingDelete {
+  background: rgba(255, 92, 40, 0.1);
+  border-color: rgba(255, 92, 40, 0.4);
+  animation: pulseWarning 1s ease-in-out infinite;
+}
+
+@keyframes pulseWarning {
+  0%, 100% {
+    box-shadow: 0 0 0 0 rgba(255, 92, 40, 0.2);
+  }
+  50% {
+    box-shadow: 0 0 0 4px rgba(255, 92, 40, 0);
+  }
+}
+
+/* Course just added animation */
+.courseItemAdded {
+  animation: courseAdded 0.5s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+@keyframes courseAdded {
+  0% {
+    opacity: 0;
+    transform: translateY(-10px) scale(0.95);
+    background: rgba(181, 232, 0, 0.2);
+  }
+  50% {
+    background: rgba(181, 232, 0, 0.15);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+    background: rgba(255, 255, 255, 0.03);
+  }
+}
+
+/* Delete button */
+.deleteButton {
+  position: absolute;
+  top: 50%;
+  right: 0.5rem;
+  transform: translateY(-50%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  background: transparent;
+  border: none;
+  border-radius: 6px;
+  color: var(--color-background-cream);
+  opacity: 0;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  flex-shrink: 0;
+  z-index: 2;
+}
+
+.infoButton {
+  position: absolute;
+  top: 50%;
+  right: 2rem;
+  transform: translateY(-50%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 22px;
+  height: 22px;
+  background: transparent;
+  border: none;
+  border-radius: 6px;
+  color: var(--color-secondary-teal);
+  opacity: 0;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  flex-shrink: 0;
+  z-index: 2;
+}
+
+.courseItem:hover .infoButton {
+  opacity: 0.6;
+}
+
+.infoButton:hover {
+  opacity: 1 !important;
+  background: rgba(62, 208, 195, 0.15);
+}
+
+/* Edit button */
+.editButton {
+  position: absolute;
+  top: 50%;
+  right: 3.5rem;
+  transform: translateY(-50%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 22px;
+  height: 22px;
+  background: transparent;
+  border: none;
+  border-radius: 6px;
+  color: var(--color-accent-green);
+  opacity: 0;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  flex-shrink: 0;
+  z-index: 2;
+}
+
+.courseItem:hover .editButton {
+  opacity: 0.5;
+}
+
+.editButton:hover {
+  opacity: 1 !important;
+  background: rgba(181, 232, 0, 0.15);
+}
+
+.courseItem:hover .deleteButton {
+  opacity: 0.5;
+}
+
+.deleteButton:hover {
+  opacity: 1 !important;
+  background: rgba(255, 92, 40, 0.2);
+  color: var(--color-primary-orange);
+}
+
+/* Delete button in confirm state */
+.deleteButtonConfirm {
+  opacity: 1 !important;
+  background: rgba(255, 92, 40, 0.2);
+  color: var(--color-primary-orange);
+  animation: confirmPulse 0.8s ease-in-out infinite;
+}
+
+@keyframes confirmPulse {
+  0%, 100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.1);
+  }
+}
+
+.deleteButtonConfirm:hover {
+  background: var(--color-primary-orange);
+  color: var(--color-primary-black);
+}
+
+/* Delete confirmation hint - positioned as tooltip */
+.deleteConfirmHint {
+  position: absolute;
+  top: -1.75rem;
+  right: 0;
+  font-size: 0.65rem;
+  color: var(--color-primary-black);
+  background: var(--color-primary-orange);
+  padding: 0.25rem 0.5rem;
+  border-radius: 4px;
+  white-space: nowrap;
+  animation: fadeIn 0.2s ease;
+  z-index: 10;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+}
+
+.deleteConfirmHint::after {
+  content: '';
+  position: absolute;
+  bottom: -4px;
+  right: 8px;
+  width: 0;
+  height: 0;
+  border-left: 5px solid transparent;
+  border-right: 5px solid transparent;
+  border-top: 5px solid var(--color-primary-orange);
+}
+
+.deleteConfirmHint button {
+  background: transparent;
+  border: none;
+  color: var(--color-primary-black);
+  opacity: 0.8;
+  cursor: pointer;
+  text-decoration: underline;
+  font-size: 0.65rem;
+  padding: 0;
+  margin-left: 0.25rem;
+}
+
+.deleteConfirmHint button:hover {
+  opacity: 1;
+}
+
+/* Drop zone hint */
+.dropZoneHint {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 1rem;
+  border: 2px dashed rgba(181, 232, 0, 0.3);
+  border-radius: 8px;
+  font-size: 0.8rem;
+  color: var(--color-accent-green);
+  opacity: 0.7;
+  margin-top: 0.5rem;
+  animation: fadeIn 0.2s ease;
+  transition: all 0.2s ease;
+}
+
+/* Semester drop target */
+.semesterDropTarget {
+  border-color: var(--color-accent-green) !important;
+  background: rgba(181, 232, 0, 0.05) !important;
+  box-shadow: 0 0 20px rgba(181, 232, 0, 0.1);
+}
+
+.semesterDropTarget .dropZoneHint {
+  opacity: 1;
+  border-color: var(--color-accent-green);
+  background: rgba(181, 232, 0, 0.1);
+}
+
+/* Semester swap target (when dragging a semester over another) */
+.semesterSwapTarget {
+  border-color: var(--color-primary-orange) !important;
+  background: rgba(255, 92, 40, 0.08) !important;
+  box-shadow: 0 0 24px rgba(255, 92, 40, 0.2);
+  transform: scale(1.02);
+}
+
+.semesterSwapTarget::after {
+  content: 'Drop to swap';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background: rgba(255, 92, 40, 0.9);
+  color: white;
+  padding: 0.5rem 1rem;
+  border-radius: 6px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  z-index: 10;
+  pointer-events: none;
+}
+
+/* Semester being dragged */
+.semesterDragging {
+  opacity: 0.5;
+  transform: scale(0.98);
+  box-shadow: none !important;
+}
+
+/* Make semester cards draggable cursor when not completed */
+.semesterCardFall:not(.semesterCompleted),
+.semesterCardSpring:not(.semesterCompleted),
+.semesterCardSummer:not(.semesterCompleted),
+.coopCard:not(.semesterCompleted) {
+  cursor: grab;
+}
+
+.semesterCardFall:not(.semesterCompleted):active,
+.semesterCardSpring:not(.semesterCompleted):active,
+.semesterCardSummer:not(.semesterCompleted):active,
+.coopCard:not(.semesterCompleted):active {
+  cursor: grabbing;
+}
+
+.courseHeader {
+  display: flex;
+  align-items: center;
+  margin-bottom: 0.25rem;
+  gap: 0.25rem;
+}
+
+.courseCode {
+  font-family: var(--font-mono);
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: var(--color-primary-orange);
+}
+
+.courseCredits {
+  font-family: var(--font-mono);
+  font-size: 0.7rem;
+  color: var(--color-background-cream);
+  opacity: 0.5;
+  background: rgba(255, 255, 255, 0.05);
+  padding: 0.15rem 0.4rem;
+  border-radius: 4px;
+  margin-left: 0.5rem;
+}
+
+.courseName {
+  font-family: var(--font-body);
+  font-size: 0.8rem;
+  color: var(--color-background-cream);
+  opacity: 0.8;
+  line-height: 1.3;
+  display: block;
+}
+
+/* Semester footer */
+.semesterFooter {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 0.75rem;
+  padding-top: 0.75rem;
+  border-top: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.courseCount {
+  font-family: var(--font-mono);
+  font-size: 0.7rem;
+  color: var(--color-background-cream);
+  opacity: 0.4;
+}
+
+/* Modal Styles */
+.modalOverlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.7);
+  backdrop-filter: blur(4px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  padding: 2rem;
+}
+
+.modal {
+  background: var(--color-primary-black);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 20px;
+  padding: 2rem;
+  max-width: 500px;
+  width: 100%;
+  position: relative;
+  box-shadow: 0 25px 80px rgba(0, 0, 0, 0.5);
+}
+
+.modalClose {
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.5rem;
+  color: var(--color-background-cream);
+  opacity: 0.5;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  transition: opacity 0.2s ease;
+}
+
+.modalClose:hover {
+  opacity: 1;
+}
+
+.modalTitle {
+  font-family: var(--font-heading);
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--color-background-cream);
+  margin-bottom: 1.5rem;
+}
+
+.modalCourses {
+  margin-bottom: 1.5rem;
+}
+
+.modalCourses p {
+  font-size: 0.9rem;
+  color: var(--color-background-cream);
+  opacity: 0.6;
+  margin-bottom: 0.75rem;
+}
+
+.modalCourseList {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.modalCourseTag {
+  font-family: var(--font-mono);
+  font-size: 0.85rem;
+  padding: 0.4rem 0.75rem;
+  background: rgba(255, 92, 40, 0.15);
+  border: 1px solid rgba(255, 92, 40, 0.3);
+  border-radius: 6px;
+  color: var(--color-primary-orange);
+}
+
+.modalInput {
+  margin-bottom: 1.5rem;
+}
+
+.modalInput label {
+  display: block;
+  font-size: 0.95rem;
+  font-weight: 500;
+  color: var(--color-background-cream);
+  margin-bottom: 0.75rem;
+}
+
+.modalInput textarea {
+  width: 100%;
+  padding: 1rem;
+  font-family: var(--font-body);
+  font-size: 0.95rem;
+  color: var(--color-background-cream);
+  background: rgba(0, 0, 0, 0.3);
+  border: 2px solid rgba(255, 255, 255, 0.1);
+  border-radius: 12px;
+  outline: none;
+  resize: vertical;
+  transition: border-color 0.2s ease;
+}
+
+.modalInput textarea::placeholder {
+  color: rgba(240, 243, 239, 0.3);
+}
+
+.modalInput textarea:focus {
+  border-color: var(--color-primary-orange);
+}
+
+.modalActions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 1rem;
+}
+
+.modalActions .primaryButton {
+  width: auto;
+  padding: 0.85rem 1.5rem;
+}
+
+.modalActions .secondaryButton {
+  padding: 0.85rem 1.5rem;
+}
+
+/* Print styles */
+@media print {
+  .header,
+  .scheduleActions,
+  .editHint,
+  .scheduleFooter,
+  .advisorNote,
+  .editIcon,
+  .stepIndicator {
+    display: none !important;
+  }
+  
+  .scheduleSection {
+    padding: 0;
+  }
+  
+  .yearGrid {
+    grid-template-columns: repeat(4, 1fr);
+  }
+  
+  .semesterCardFall,
+  .semesterCardSpring,
+  .semesterCardFinal,
+  .coopCard {
+    break-inside: avoid;
+  }
+}
+
+/* Research Animation */
+.researchAnimation {
+  margin-bottom: 2rem;
+}
+
+.searchPulse {
+  display: inline-flex;
+  padding: 1.5rem;
+  background: rgba(255, 92, 40, 0.1);
+  border-radius: 50%;
+  animation: pulseGlow 2s ease-in-out infinite;
+}
+
+@keyframes pulseGlow {
+  0%, 100% {
+    box-shadow: 0 0 0 0 rgba(255, 92, 40, 0.3);
+  }
+  50% {
+    box-shadow: 0 0 0 20px rgba(255, 92, 40, 0);
+  }
+}
+
+/* Phase Progress - Horizontal */
+.phaseProgress {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0;
+  margin-bottom: 2rem;
+  padding: 1rem;
+  background: rgba(255, 255, 255, 0.02);
+  border-radius: 12px;
+}
+
+.phaseStep {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+  min-width: 80px;
+  opacity: 0.3;
+  transition: all 0.3s ease;
+}
+
+.phaseStep.phaseComplete {
+  opacity: 1;
+}
+
+.phaseStep.phaseActive {
+  opacity: 1;
+}
+
+.phaseStep.phasePending {
+  opacity: 0.3;
+}
+
+.phaseIcon {
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.9rem;
+  font-weight: 600;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.05);
+  color: var(--color-background-cream);
+  transition: all 0.3s ease;
+}
+
+.phaseComplete .phaseIcon {
+  background: rgba(181, 232, 0, 0.2);
+  color: var(--color-accent-green);
+}
+
+.phaseActive .phaseIcon {
+  background: rgba(255, 92, 40, 0.2);
+  color: var(--color-primary-orange);
+}
+
+.phaseLabel {
+  font-size: 0.7rem;
+  font-weight: 500;
+  text-align: center;
+  color: var(--color-background-cream);
+  white-space: nowrap;
+}
+
+.phaseConnector {
+  width: 24px;
+  height: 2px;
+  background: rgba(255, 255, 255, 0.1);
+  flex-shrink: 0;
+}
+
+.phaseSpinner {
+  display: inline-block;
+  width: 14px;
+  height: 14px;
+  border: 2px solid rgba(255, 92, 40, 0.3);
+  border-top-color: var(--color-primary-orange);
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+/* Two-Stage Progress Design */
+.stageProgress {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  margin-bottom: 2rem;
+  width: 100%;
+  max-width: 400px;
+}
+
+.stageCard {
+  padding: 1rem 1.25rem;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  border-radius: 12px;
+  transition: all 0.3s ease;
+}
+
+.stageCard.stagePending {
+  opacity: 0.4;
+}
+
+.stageCard.stageActive {
+  background: rgba(255, 92, 40, 0.08);
+  border-color: rgba(255, 92, 40, 0.3);
+}
+
+.stageCard.stageComplete {
+  background: rgba(181, 232, 0, 0.06);
+  border-color: rgba(181, 232, 0, 0.2);
+}
+
+.stageHeader {
+  display: flex;
+  align-items: center;
+  gap: 0.875rem;
+}
+
+.stageIndicator {
+  width: 36px;
+  height: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.05);
+  flex-shrink: 0;
+}
+
+.stageActive .stageIndicator {
+  background: rgba(255, 92, 40, 0.15);
+}
+
+.stageComplete .stageIndicator {
+  background: rgba(181, 232, 0, 0.15);
+}
+
+.stageSpinner {
+  width: 18px;
+  height: 18px;
+  border: 2px solid rgba(255, 92, 40, 0.3);
+  border-top-color: var(--color-primary-orange);
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+
+.stageCheck {
+  color: var(--color-accent-green);
+  font-size: 1rem;
+  font-weight: 600;
+}
+
+.stagePendingIcon {
+  color: rgba(255, 255, 255, 0.4);
+  font-size: 0.9rem;
+  font-weight: 600;
+}
+
+.stageInfo {
+  flex: 1;
+  min-width: 0;
+}
+
+.stageTitle {
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: var(--color-background-cream);
+  margin-bottom: 0.25rem;
+}
+
+.stageTime {
+  font-size: 0.8rem;
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+}
+
+.elapsed {
+  color: var(--color-primary-orange);
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+}
+
+.estimated {
+  color: rgba(255, 255, 255, 0.4);
+}
+
+.completedTime {
+  color: var(--color-accent-green);
+  font-weight: 500;
+}
+
+.stageProgressBar {
+  margin-top: 0.75rem;
+  height: 4px;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 2px;
+  overflow: hidden;
+}
+
+.stageProgressFill {
+  height: 100%;
+  background: linear-gradient(90deg, var(--color-primary-orange), #ff7b4a);
+  border-radius: 2px;
+  transition: width 0.5s ease-out;
+}
+
+.stageComplete .stageProgressFill {
+  background: var(--color-accent-green);
+  width: 100% !important;
+}
+
+.stageConnector {
+  display: flex;
+  justify-content: center;
+  padding: 0.25rem 0;
+}
+
+.connectorLine {
+  width: 2px;
+  height: 16px;
+  background: rgba(255, 255, 255, 0.1);
+  transition: background 0.3s ease;
+}
+
+.connectorActive .connectorLine {
+  background: rgba(181, 232, 0, 0.4);
+}
+
+.currentPhase {
+  font-size: 0.85rem;
+  color: rgba(255, 255, 255, 0.6);
+  text-align: center;
+  margin-bottom: 1.5rem;
+  min-height: 1.25rem;
+}
+
+/* Legacy research steps - keep for compatibility */
+.researchSteps {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  margin-bottom: 2rem;
+  text-align: left;
+}
+
+.researchStep {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.75rem 1rem;
+  background: rgba(255, 255, 255, 0.02);
+  border-radius: 10px;
+  font-size: 0.95rem;
+  color: var(--color-background-cream);
+  opacity: 0.4;
+}
+
+.researchStep.stepComplete {
+  opacity: 1;
+  background: rgba(181, 232, 0, 0.1);
+}
+
+.researchStep.stepActive {
+  opacity: 1;
+  background: rgba(255, 92, 40, 0.1);
+}
+
+.stepCheck {
+  color: var(--color-accent-green);
+  font-weight: bold;
+}
+
+.stepSpinner {
+  width: 16px;
+  height: 16px;
+  border: 2px solid rgba(255, 92, 40, 0.3);
+  border-top-color: var(--color-primary-orange);
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+.stepPending {
+  color: var(--color-background-cream);
+  opacity: 0.3;
+}
+
+/* Agent Log */
+.agentLog {
+  background: rgba(0, 0, 0, 0.3);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 12px;
+  overflow: hidden;
+  text-align: left;
+}
+
+.logHeader {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.75rem 1rem;
+  background: rgba(255, 255, 255, 0.03);
+  font-family: var(--font-mono);
+  font-size: 0.8rem;
+  color: var(--color-background-cream);
+  opacity: 0.6;
+}
+
+.logDot {
+  width: 8px;
+  height: 8px;
+  background: var(--color-accent-green);
+  border-radius: 50%;
+  animation: pulse 2s ease-in-out infinite;
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.5; }
+}
+
+.logContent {
+  padding: 1rem;
+  font-family: var(--font-mono);
+  font-size: 0.8rem;
+  line-height: 1.8;
+  color: var(--color-background-cream);
+  opacity: 0.7;
+}
+
+.logContent p {
+  margin: 0;
+}
+
+.logTime {
+  color: var(--color-secondary-teal);
+  margin-right: 0.5rem;
+}
+
+/* Requirements Section */
+.requirementsSection {
+  flex: 1;
+  padding: 2rem;
+  max-width: 1200px;
+  margin: 0 auto;
+  width: 100%;
+}
+
+.requirementsHeader {
+  margin-bottom: 2rem;
+}
+
+.requirementsTitle {
+  font-family: var(--font-heading);
+  font-size: 2rem;
+  font-weight: 700;
+  color: var(--color-background-cream);
+  margin-bottom: 0.25rem;
+}
+
+.requirementsSubtitle {
+  font-size: 1rem;
+  color: var(--color-background-cream);
+  opacity: 0.5;
+}
+
+/* Source Card */
+.sourceCard {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.75rem;
+  padding: 1rem 1.25rem;
+  background: rgba(62, 208, 195, 0.1);
+  border: 1px solid rgba(62, 208, 195, 0.2);
+  border-radius: 12px;
+  margin-bottom: 2rem;
+}
+
+.sourceIcon {
+  color: var(--color-secondary-teal);
+  flex-shrink: 0;
+  margin-top: 2px;
+}
+
+.sourceText {
+  font-size: 0.9rem;
+  line-height: 1.5;
+  color: var(--color-background-cream);
+}
+
+.sourceText strong {
+  color: var(--color-secondary-teal);
+}
+
+.sourceLink {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  color: var(--color-secondary-teal);
+  text-decoration: none;
+  margin-left: 0.5rem;
+}
+
+.sourceLink:hover {
+  text-decoration: underline;
+}
+
+/* Requirements Grid */
+.requirementsGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+  gap: 1.5rem;
+  margin-bottom: 2rem;
+}
+
+.requirementCategory {
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 16px;
+  padding: 1.5rem;
+}
+
+.categoryHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 1rem;
+}
+
+.categoryHeader h3 {
+  font-family: var(--font-heading);
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: var(--color-background-cream);
+}
+
+.categoryCount {
+  font-family: var(--font-mono);
+  font-size: 0.8rem;
+  color: var(--color-background-cream);
+  opacity: 0.5;
+}
+
+.categoryBadge {
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  padding: 0.25rem 0.75rem;
+  background: rgba(255, 92, 40, 0.15);
+  color: var(--color-primary-orange);
+  border-radius: 100px;
+}
+
+.categoryNote {
+  font-size: 0.85rem;
+  color: var(--color-background-cream);
+  opacity: 0.5;
+  margin-bottom: 1rem;
+  line-height: 1.5;
+}
+
+/* Course List */
+.courseList {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.courseItem {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.courseCheck {
+  width: 18px;
+  height: 18px;
+  accent-color: var(--color-primary-orange);
+  cursor: pointer;
+}
+
+.courseLabel {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.75rem;
+  background: rgba(0, 0, 0, 0.2);
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background 0.2s ease;
+}
+
+.courseLabel:hover {
+  background: rgba(0, 0, 0, 0.3);
+}
+
+.courseCode {
+  font-family: var(--font-mono);
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--color-primary-orange);
+  min-width: 70px;
+}
+
+.courseName {
+  flex: 1;
+  font-size: 0.9rem;
+  color: var(--color-background-cream);
+}
+
+.courseCredits {
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  color: var(--color-background-cream);
+  opacity: 0.4;
+}
+
+.moreIndicator {
+  font-size: 0.85rem;
+  color: var(--color-primary-orange);
+  padding: 0.5rem 0.75rem;
+  cursor: pointer;
+}
+
+.moreIndicator:hover {
+  text-decoration: underline;
+}
+
+/* NUpath Tags */
+.nuPathGrid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.nuPathTag {
+  font-size: 0.75rem;
+  padding: 0.35rem 0.75rem;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 6px;
+  color: var(--color-background-cream);
+  opacity: 0.7;
+}
+
+.nuPathTagMore {
+  font-size: 0.75rem;
+  padding: 0.35rem 0.75rem;
+  color: var(--color-primary-orange);
+  cursor: pointer;
+}
+
+/* Requirements Footer */
+.requirementsFooter {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-top: 2rem;
+}
+
+.requirementsFooter .primaryButton {
+  width: auto;
+  padding: 1rem 2rem;
+}
+
+/* Advisor Note */
+.advisorNote {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.5rem;
+  font-size: 0.85rem;
+  color: var(--color-background-cream);
+  opacity: 0.5;
+  margin-top: 2rem;
+  padding: 1rem;
+  background: rgba(255, 255, 255, 0.02);
+  border-radius: 10px;
+  line-height: 1.5;
+}
+
+.advisorNote svg {
+  flex-shrink: 0;
+  margin-top: 2px;
+}
+
+/* Preferences Form */
+.preferencesForm {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  margin-bottom: 2rem;
+  text-align: left;
+}
+
+.prefGroup {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.prefLabel {
+  font-size: 0.9rem;
+  font-weight: 500;
+  color: var(--color-background-cream);
+}
+
+.prefSelect {
+  padding: 0.85rem 1rem;
+  font-family: var(--font-body);
+  font-size: 0.95rem;
+  color: var(--color-background-cream);
+  background: rgba(0, 0, 0, 0.3);
+  border: 2px solid rgba(255, 255, 255, 0.1);
+  border-radius: 10px;
+  cursor: pointer;
+  outline: none;
+  transition: border-color 0.2s ease;
+}
+
+.prefSelect:focus {
+  border-color: var(--color-primary-orange);
+}
+
+.prefSelect option {
+  background: var(--color-primary-black);
+}
+
+.prefTextarea {
+  padding: 0.85rem 1rem;
+  font-family: var(--font-body);
+  font-size: 0.95rem;
+  color: var(--color-background-cream);
+  background: rgba(0, 0, 0, 0.3);
+  border: 2px solid rgba(255, 255, 255, 0.1);
+  border-radius: 10px;
+  outline: none;
+  resize: vertical;
+  transition: border-color 0.2s ease;
+}
+
+.prefTextarea::placeholder {
+  color: rgba(240, 243, 239, 0.3);
+}
+
+.prefTextarea:focus {
+  border-color: var(--color-primary-orange);
+}
+
+/* Schedule Section */
+.scheduleSection {
+  flex: 1;
+  padding: 2rem;
+  max-width: 1400px;
+  margin: 0 auto;
+  width: 100%;
+}
+
+.scheduleHeader {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  margin-bottom: 2rem;
+}
+
+.scheduleTitle {
+  font-family: var(--font-heading);
+  font-size: 2rem;
+  font-weight: 700;
+  color: var(--color-background-cream);
+  margin-bottom: 0.25rem;
+}
+
+.scheduleSubtitle {
+  font-size: 1rem;
+  color: var(--color-background-cream);
+  opacity: 0.5;
+}
+
+.regenerateButton {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.75rem 1.25rem;
+  font-family: var(--font-body);
+  font-size: 0.9rem;
+  font-weight: 500;
+  color: var(--color-background-cream);
+  background: transparent;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 10px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.regenerateButton:hover {
+  border-color: var(--color-primary-orange);
+  color: var(--color-primary-orange);
+}
+
+/* Year Grid */
+.yearGrid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 1.5rem;
+  margin-bottom: 2rem;
+}
+
+@media (max-width: 1200px) {
+  .yearGrid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 700px) {
+  .yearGrid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.yearColumn {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.yearTitle {
+  font-family: var(--font-heading);
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--color-primary-orange);
+  padding-bottom: 0.5rem;
+  border-bottom: 2px solid var(--color-primary-orange);
+}
+
+.semesterCard {
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 12px;
+  padding: 1rem;
+}
+
+.semesterCardFinal {
+  background: rgba(181, 232, 0, 0.05);
+  border: 1px solid rgba(181, 232, 0, 0.2);
+  border-radius: 12px;
+  padding: 1rem;
+}
+
+.semesterTitle {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--color-background-cream);
+  margin-bottom: 0.75rem;
+}
+
+.semesterCourses {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+  margin-bottom: 0.75rem;
+}
+
+.scheduleCourse {
+  font-family: var(--font-mono);
+  font-size: 0.8rem;
+  padding: 0.4rem 0.6rem;
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 6px;
+  color: var(--color-background-cream);
+}
+
+.semesterCredits {
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  color: var(--color-background-cream);
+  opacity: 0.4;
+}
+
+.coopCard {
+  background: rgba(62, 208, 195, 0.08);
+  border: 1px solid rgba(62, 208, 195, 0.2);
+  border-radius: 12px;
+  padding: 1rem;
+}
+
+.coopTitle {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--color-background-cream);
+  margin-bottom: 0.5rem;
+}
+
+.coopBadge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-family: var(--font-mono);
+  font-size: 0.85rem;
+  color: var(--color-secondary-teal);
+}
+
+.graduationBadge {
+  display: inline-block;
+  margin-top: 0.5rem;
+  font-size: 0.9rem;
+}
+
+/* Schedule Explanation */
+.scheduleExplanation {
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 12px;
+  padding: 1.5rem;
+  margin-bottom: 2rem;
+}
+
+.scheduleExplanation h4 {
+  font-family: var(--font-heading);
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--color-primary-orange);
+  margin-bottom: 0.75rem;
+}
+
+.scheduleExplanation p {
+  font-size: 0.95rem;
+  line-height: 1.7;
+  color: var(--color-background-cream);
+  opacity: 0.8;
+}
+
+.scheduleSummaryGrid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+
+.summaryItem {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  padding: 0.75rem;
+  background: rgba(255, 255, 255, 0.02);
+  border-radius: 8px;
+}
+
+.summaryLabel {
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--color-secondary-teal);
+  opacity: 0.8;
+}
+
+.summaryValue {
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: var(--color-background-cream);
+}
+
+.scheduleExplanation a {
+  color: var(--color-secondary-teal);
+  text-decoration: none;
+}
+
+.scheduleExplanation a:hover {
+  text-decoration: underline;
+}
+
+/* Schedule Footer */
+.scheduleFooter {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.scheduleFooter .primaryButton {
+  width: auto;
+  padding: 1rem 2rem;
+}
+
+/* School Selection Grid */
+.schoolGrid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 0.75rem;
+  margin: 1.5rem 0;
+  max-height: 400px;
+  overflow-y: auto;
+  padding-right: 0.5rem;
+}
+
+.schoolCard {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 1rem;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 10px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  text-align: left;
+}
+
+.schoolCard:hover {
+  background: rgba(255, 92, 40, 0.1);
+  border-color: var(--color-primary-orange);
+  transform: translateY(-2px);
+}
+
+.schoolIcon {
+  width: 48px;
+  height: 48px;
+  border-radius: 10px;
+  background: linear-gradient(135deg, rgba(255, 92, 40, 0.2), rgba(62, 208, 195, 0.2));
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--color-primary-orange);
+  flex-shrink: 0;
+}
+
+.schoolInfo {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  overflow: hidden;
+}
+
+.schoolName {
+  font-family: var(--font-heading);
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: var(--color-background-cream);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.schoolLocation {
+  font-size: 0.8rem;
+  color: var(--color-background-cream);
+  opacity: 0.6;
+}
+
+.searchingIndicator {
+  position: absolute;
+  right: 1rem;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 0.8rem;
+  color: var(--color-secondary-teal);
+}
+
+.noResults {
+  text-align: center;
+  color: var(--color-background-cream);
+  opacity: 0.6;
+  padding: 2rem;
+}
+
+/* Change School Button */
+.changeSchoolBtn {
+  margin-left: 0.75rem;
+  padding: 0.25rem 0.75rem;
+  font-size: 0.75rem;
+  color: var(--color-primary-orange);
+  background: transparent;
+  border: 1px solid var(--color-primary-orange);
+  border-radius: 4px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.changeSchoolBtn:hover {
+  background: rgba(255, 92, 40, 0.1);
+}
+
+/* Error Box */
+.errorBox {
+  background: rgba(255, 92, 40, 0.1);
+  border: 1px solid var(--color-primary-orange);
+  border-radius: 12px;
+  padding: 1.5rem;
+  text-align: center;
+  margin: 1.5rem 0;
+}
+
+.errorBox p {
+  color: var(--color-primary-orange);
+  margin-bottom: 1rem;
+}
+
+/* Thoughts Container */
+.thoughtsContainer {
+  background: linear-gradient(135deg, rgba(16, 24, 32, 0.9), rgba(26, 34, 42, 0.9));
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 16px;
+  padding: 1.25rem;
+  margin: 1.5rem 0;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+}
+
+.thoughtsHeader {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-family: var(--font-mono);
+  font-size: 0.7rem;
+  font-weight: 600;
+  color: var(--color-background-cream);
+  opacity: 0.6;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  margin-bottom: 1rem;
+  padding-bottom: 0.75rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.thoughtsDot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--color-primary-orange);
+  animation: pulseDot 1.5s ease-in-out infinite;
+  box-shadow: 0 0 8px rgba(255, 92, 40, 0.4);
+}
+
+@keyframes pulseDot {
+  0%, 100% { opacity: 1; transform: scale(1); box-shadow: 0 0 8px rgba(255, 92, 40, 0.4); }
+  50% { opacity: 0.6; transform: scale(0.85); box-shadow: 0 0 12px rgba(255, 92, 40, 0.6); }
+}
+
+/* Scrollable thoughts list - shows ~3.5 thoughts */
+.thoughtsList {
+  max-height: 220px;
+  overflow-y: auto;
+  scroll-behavior: smooth;
+  padding-right: 0.5rem;
+}
+
+.thoughtsList::-webkit-scrollbar {
+  width: 4px;
+}
+
+.thoughtsList::-webkit-scrollbar-track {
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 2px;
+}
+
+.thoughtsList::-webkit-scrollbar-thumb {
+  background: rgba(62, 208, 195, 0.3);
+  border-radius: 2px;
+}
+
+.thoughtsList::-webkit-scrollbar-thumb:hover {
+  background: rgba(62, 208, 195, 0.5);
+}
+
+/* Individual thought item - for generation phase */
+.thoughtItemGen {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.75rem;
+  padding: 0.75rem;
+  margin-bottom: 0.5rem;
+  border-radius: 10px;
+  background: rgba(255, 255, 255, 0.02);
+  border: 1px solid transparent;
+  animation: thoughtSlideIn 0.3s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+  opacity: 0;
+  transform: translateY(10px);
+}
+
+@keyframes thoughtSlideIn {
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.thoughtItemGen.thoughtActive {
+  background: rgba(255, 92, 40, 0.05);
+  border-color: rgba(255, 92, 40, 0.15);
+}
+
+.thoughtItemGen.thoughtComplete {
+  opacity: 0.6;
+  animation: thoughtSlideIn 0.3s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+}
+
+.thoughtNumberGen {
+  flex-shrink: 0;
+  width: 22px;
+  height: 22px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--font-mono);
+  font-size: 0.7rem;
+  font-weight: 600;
+  color: var(--color-background-cream);
+  opacity: 0.5;
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 6px;
+}
+
+.thoughtText {
+  flex: 1;
+  font-family: var(--font-body);
+  font-size: 0.9rem;
+  line-height: 1.5;
+  color: var(--color-background-cream);
+  word-break: break-word;
+}
+
+.cursor {
+  display: inline-block;
+  animation: blink 0.8s step-end infinite;
+  color: var(--color-secondary-teal);
+  margin-left: 2px;
+  font-weight: 600;
+}
+
+@keyframes blink {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0; }
+}
+
+/* Markdown Schedule Display */
+.markdownSchedule {
+  background: rgba(255, 255, 255, 0.02);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 16px;
+  padding: 2rem;
+  margin-bottom: 2rem;
+}
+
+.markdownContent {
+  font-family: var(--font-body);
+  line-height: 1.7;
+  color: var(--color-background-cream);
+}
+
+.markdownHeader {
+  font-family: var(--font-heading);
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: var(--color-primary-orange);
+  margin: 1.5rem 0 1rem;
+  padding-top: 1rem;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.markdownHeader:first-child {
+  margin-top: 0;
+  padding-top: 0;
+  border-top: none;
+}
+
+.markdownSemester {
+  font-family: var(--font-heading);
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--color-secondary-teal);
+  margin: 1rem 0 0.5rem;
+  padding: 0.75rem;
+  background: rgba(62, 208, 195, 0.1);
+  border-radius: 8px;
+}
+
+.markdownCourse {
+  padding: 0.4rem 0 0.4rem 1.5rem;
+  font-size: 0.95rem;
+  color: var(--color-background-cream);
+  opacity: 0.9;
+  position: relative;
+}
+
+.markdownCourse::before {
+  content: '•';
+  position: absolute;
+  left: 0.5rem;
+  color: var(--color-primary-orange);
+}
+
+.markdownCoop {
+  padding: 0.75rem 1rem;
+  margin: 0.75rem 0;
+  background: linear-gradient(135deg, rgba(255, 92, 40, 0.15), rgba(255, 192, 164, 0.1));
+  border: 1px solid rgba(255, 92, 40, 0.3);
+  border-radius: 8px;
+  font-weight: 600;
+  color: var(--color-primary-orange);
+}
+
+.markdownText {
+  margin: 0.5rem 0;
+  opacity: 0.85;
+}
+
+/* Warnings Box */
+.warningsBox {
+  background: rgba(255, 193, 7, 0.1);
+  border: 1px solid rgba(255, 193, 7, 0.5);
+  border-radius: 12px;
+  padding: 1.5rem;
+  margin-bottom: 2rem;
+}
+
+.warningsBox p {
+  margin: 0;
+  line-height: 1.6;
+  color: var(--color-background-cream);
+  opacity: 0.9;
+}
+
+.warningsBox h4 {
+  font-family: var(--font-heading);
+  font-size: 1rem;
+  font-weight: 600;
+  color: #ffc107;
+  margin-bottom: 0.75rem;
+}
+
+.warningsBox ul {
+  list-style: disc;
+  padding-left: 1.5rem;
+}
+
+.warningsBox li {
+  font-size: 0.9rem;
+  color: var(--color-background-cream);
+  opacity: 0.8;
+  margin-bottom: 0.5rem;
+}
+
+/* ============================================
+   SPLIT LAYOUT - Schedule + Chat
+   ============================================ */
+
+.splitLayout {
+  display: flex;
+  flex: 1;
+  height: calc(100vh - 62px - 49px); /* navbar (62px) + toolbar (49px) */
+}
+
+.schedulePanel {
+  flex: 1;
+  overflow: auto;
+  padding: 2rem;
+  max-width: 100%;
+}
+
+/* ============================================
+   CHAT PANEL - Right Side
+   ============================================ */
+
+.chatPanel {
+  width: 380px;
+  min-width: 380px;
+  display: flex;
+  flex-direction: column;
+  background: rgba(0, 0, 0, 0.3);
+  border-left: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.chatHeader {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 1rem 1.25rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  background: rgba(255, 255, 255, 0.02);
+  font-family: var(--font-heading);
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: var(--color-background-cream);
+}
+
+.chatHeaderIcon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.35rem;
+  background: rgba(255, 92, 40, 0.15);
+  border-radius: 8px;
+}
+
+.chatMessages {
+  flex: 1;
+  overflow-y: auto;
+  padding: 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.chatMessages::-webkit-scrollbar {
+  width: 6px;
+}
+
+.chatMessages::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.chatMessages::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 3px;
+}
+
+.chatMessages::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 255, 255, 0.2);
+}
+
+/* Welcome state */
+.chatWelcome {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 2rem 1rem;
+  height: 100%;
+}
+
+.chatWelcomeIcon {
+  padding: 1rem;
+  background: rgba(255, 92, 40, 0.1);
+  border-radius: 50%;
+  margin-bottom: 1.25rem;
+  opacity: 0.6;
+}
+
+.chatWelcome h3 {
+  font-family: var(--font-heading);
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: var(--color-background-cream);
+  margin-bottom: 0.5rem;
+}
+
+.chatWelcome p {
+  font-size: 0.9rem;
+  color: var(--color-background-cream);
+  opacity: 0.6;
+  line-height: 1.5;
+  margin-bottom: 1.5rem;
+}
+
+.chatSuggestions {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  width: 100%;
+}
+
+.chatSuggestions button {
+  padding: 0.75rem 1rem;
+  font-family: var(--font-body);
+  font-size: 0.85rem;
+  color: var(--color-background-cream);
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 10px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  text-align: left;
+}
+
+.chatSuggestions button:hover {
+  background: rgba(255, 92, 40, 0.1);
+  border-color: var(--color-primary-orange);
+  color: var(--color-primary-orange);
+}
+
+/* Chat Messages */
+.chatMessage {
+  display: flex;
+  gap: 0.75rem;
+  animation: fadeSlideUp 0.3s ease forwards;
+}
+
+.chatMessageUser {
+  flex-direction: row-reverse;
+}
+
+.chatMessageAvatar {
+  width: 32px;
+  height: 32px;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(255, 92, 40, 0.15);
+  border-radius: 8px;
+}
+
+.chatMessageContent {
+  max-width: 85%;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.chatMessageUser .chatMessageContent {
+  align-items: flex-end;
+}
+
+.chatMessageContent p {
+  padding: 0.75rem 1rem;
+  border-radius: 14px;
+  font-size: 0.9rem;
+  line-height: 1.5;
+  margin: 0;
+}
+
+.chatMessageUser .chatMessageContent p {
+  background: var(--color-primary-orange);
+  color: var(--color-primary-black);
+  border-bottom-right-radius: 4px;
+}
+
+.chatMessageAssistant .chatMessageContent p {
+  background: rgba(255, 255, 255, 0.05);
+  color: var(--color-background-cream);
+  border-bottom-left-radius: 4px;
+}
+
+.chatMessageTime {
+  font-size: 0.7rem;
+  color: var(--color-background-cream);
+  opacity: 0.4;
+  padding: 0 0.25rem;
+}
+
+.chatMessageIcon {
+  flex-shrink: 0;
+  width: 28px;
+  height: 28px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 50%;
+  overflow: hidden;
+}
+
+.currentThought {
+  font-size: 0.8rem;
+  color: var(--color-background-cream);
+  opacity: 0.7;
+  margin-top: 0.5rem;
+  font-style: italic;
+}
+
+/* Collapsible Thoughts Toggle */
+.thoughtsCollapsible {
+  margin-bottom: 0.5rem;
+}
+
+.thoughtsToggle {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.4rem 0.6rem;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  width: 100%;
+  color: rgba(255, 255, 255, 0.7);
+  font-size: 0.8rem;
+}
+
+.thoughtsToggle:hover {
+  background: rgba(255, 255, 255, 0.06);
+  border-color: rgba(255, 255, 255, 0.12);
+}
+
+.thoughtsToggleIcon {
+  font-size: 0.55rem;
+  color: var(--color-background-cream);
+  opacity: 0.5;
+  transition: transform 0.2s ease;
+}
+
+.thoughtsToggleText {
+  font-size: 0.75rem;
+  color: var(--color-background-cream);
+  opacity: 0.5;
+}
+
+.thoughtsExpanded {
+  margin-top: 0.5rem;
+  padding: 0.75rem;
+  background: rgba(255, 255, 255, 0.02);
+  border-radius: 8px;
+  max-height: 200px;
+  overflow-y: auto;
+}
+
+.thoughtsExpanded::-webkit-scrollbar {
+  width: 4px;
+}
+
+.thoughtsExpanded::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.thoughtsExpanded::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 2px;
+}
+
+.thoughtItem {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.5rem;
+  padding: 0.3rem 0;
+  font-size: 0.75rem;
+  line-height: 1.4;
+  color: var(--color-background-cream);
+  opacity: 0.6;
+}
+
+.thoughtNumber {
+  flex-shrink: 0;
+  width: 16px;
+  height: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--font-mono);
+  font-size: 0.6rem;
+  font-weight: 600;
+  color: var(--color-background-cream);
+  opacity: 0.4;
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 4px;
+}
+
+/* Thinking Indicator - Streaming State */
+.thinkingIndicator {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.75rem 1rem;
+  background: rgba(255, 255, 255, 0.03);
+  border-radius: 14px;
+  border-bottom-left-radius: 4px;
+}
+
+.thinkingDots {
+  display: flex;
+  align-items: center;
+  gap: 3px;
+}
+
+.thinkingDots span {
+  width: 6px;
+  height: 6px;
+  background: var(--color-primary-orange);
+  border-radius: 50%;
+  animation: thinkingPulse 1.4s ease-in-out infinite;
+}
+
+.thinkingDots span:nth-child(1) {
+  animation-delay: 0s;
+}
+
+.thinkingDots span:nth-child(2) {
+  animation-delay: 0.2s;
+}
+
+.thinkingDots span:nth-child(3) {
+  animation-delay: 0.4s;
+}
+
+@keyframes thinkingPulse {
+  0%, 60%, 100% {
+    opacity: 0.3;
+    transform: scale(0.8);
+  }
+  30% {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+.thinkingText {
+  font-size: 0.85rem;
+  color: var(--color-background-cream);
+  opacity: 0.7;
+  animation: textFadeIn 0.3s ease forwards;
+}
+
+@keyframes textFadeIn {
+  from {
+    opacity: 0;
+    transform: translateX(-5px);
+  }
+  to {
+    opacity: 0.7;
+    transform: translateX(0);
+  }
+}
+
+/* Legacy - keeping for compatibility */
+.chatThoughts {
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 12px;
+  padding: 0.75rem;
+  max-height: 200px;
+  overflow-y: auto;
+}
+
+.chatThoughts::-webkit-scrollbar {
+  width: 4px;
+}
+
+.chatThoughts::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.chatThoughts::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 2px;
+}
+
+.chatThoughtItem {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.5rem;
+  padding: 0.35rem 0;
+  font-size: 0.8rem;
+  line-height: 1.4;
+  color: var(--color-background-cream);
+  opacity: 0.7;
+}
+
+.chatThoughtNumber {
+  flex-shrink: 0;
+  width: 18px;
+  height: 18px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--font-mono);
+  font-size: 0.65rem;
+  font-weight: 600;
+  color: var(--color-background-cream);
+  opacity: 0.5;
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 5px;
+}
+
+/* Chat Input Area */
+.chatInputArea {
+  padding: 1rem;
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+  background: rgba(255, 255, 255, 0.02);
+}
+
+.chatError {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.6rem 0.75rem;
+  margin-bottom: 0.75rem;
+  background: rgba(255, 92, 40, 0.15);
+  border: 1px solid rgba(255, 92, 40, 0.3);
+  border-radius: 8px;
+  font-size: 0.8rem;
+  color: var(--color-primary-orange);
+}
+
+.chatError button {
+  background: transparent;
+  border: none;
+  color: var(--color-primary-orange);
+  font-size: 1rem;
+  cursor: pointer;
+}
+
+/* Chat Error Message */
+.chatErrorMessage {
+  color: var(--color-primary-orange);
+}
+
+/* Chat Retry Button */
+.chatRetryButton {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.45rem 0.85rem;
+  margin-top: 0.5rem;
+  background: rgba(255, 92, 40, 0.1);
+  border: 1px solid rgba(255, 92, 40, 0.3);
+  border-radius: 6px;
+  color: var(--color-primary-orange);
+  font-size: 0.8rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.chatRetryButton:hover:not(:disabled) {
+  background: rgba(255, 92, 40, 0.2);
+  border-color: rgba(255, 92, 40, 0.5);
+  transform: translateY(-1px);
+}
+
+.chatRetryButton:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.chatRetryButton svg {
+  flex-shrink: 0;
+}
+
+/* Cursor-style Thinking Box */
+.thinkingBox {
+  margin-bottom: 0.75rem;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 12px;
+  overflow: hidden;
+}
+
+.thinkingBoxToggle {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  padding: 0.6rem 0.85rem;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  transition: background 0.15s ease;
+}
+
+.thinkingBoxToggle:hover {
+  background: rgba(255, 255, 255, 0.03);
+}
+
+.thinkingBoxLeft {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  min-width: 0;
+  flex: 1;
+}
+
+.thinkingBoxDot {
+  flex-shrink: 0;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--color-primary-orange);
+  animation: thinkingPulse 1.4s ease-in-out infinite;
+  box-shadow: 0 0 8px rgba(255, 92, 40, 0.5);
+}
+
+.thinkingBoxLabel {
+  flex-shrink: 0;
+  font-family: var(--font-mono);
+  font-size: 0.7rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--color-primary-orange);
+  opacity: 0.9;
+}
+
+.thinkingBoxCurrent {
+  font-size: 0.8rem;
+  color: var(--color-background-cream);
+  opacity: 0.45;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  text-align: left;
+}
+
+.thinkingBoxRight {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  flex-shrink: 0;
+  margin-left: 0.75rem;
+}
+
+.thinkingBoxCount {
+  font-family: var(--font-mono);
+  font-size: 0.65rem;
+  color: var(--color-background-cream);
+  opacity: 0.35;
+  padding: 0.15rem 0.4rem;
+  background: rgba(255, 255, 255, 0.06);
+  border-radius: 4px;
+}
+
+.thinkingBoxChevron {
+  color: var(--color-background-cream);
+  opacity: 0.35;
+  transition: transform 0.2s ease;
+}
+
+.thinkingBoxChevronExpanded {
+  transform: rotate(180deg);
+}
+
+.thinkingBoxExpanded {
+  border-top: 1px solid rgba(255, 255, 255, 0.06);
+  max-height: 180px;
+  overflow-y: auto;
+  padding: 0.5rem;
+}
+
+.thinkingBoxExpanded::-webkit-scrollbar {
+  width: 4px;
+}
+
+.thinkingBoxExpanded::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.thinkingBoxExpanded::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 2px;
+}
+
+.thinkingBoxItem {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.6rem;
+  padding: 0.4rem 0.5rem;
+  border-radius: 6px;
+  animation: thoughtFadeIn 0.2s ease forwards;
+}
+
+.thinkingBoxItem:hover {
+  background: rgba(255, 255, 255, 0.03);
+}
+
+@keyframes thoughtFadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-4px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.thinkingBoxNumber {
+  flex-shrink: 0;
+  width: 16px;
+  height: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--font-mono);
+  font-size: 0.55rem;
+  font-weight: 600;
+  color: var(--color-background-cream);
+  opacity: 0.3;
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 4px;
+}
+
+.thinkingBoxText {
+  font-size: 0.75rem;
+  line-height: 1.4;
+  color: var(--color-background-cream);
+  opacity: 0.5;
+}
+
+.chatInputWrapper {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  background: rgba(0, 0, 0, 0.4);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 12px;
+  padding: 0.4rem 0.4rem 0.4rem 0.5rem;
+  transition: border-color 0.2s ease;
+}
+
+.chatInputWrapper:focus-within {
+  border-color: var(--color-primary-orange);
+}
+
+/* Web Search Toggle Button */
+.webSearchToggle {
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 8px;
+  color: rgba(240, 243, 239, 0.4);
+  cursor: pointer;
+  transition: all 0.2s ease;
+  flex-shrink: 0;
+}
+
+.webSearchToggle:hover:not(:disabled) {
+  background: rgba(255, 255, 255, 0.1);
+  color: rgba(240, 243, 239, 0.7);
+  border-color: rgba(255, 255, 255, 0.2);
+}
+
+.webSearchToggle:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.webSearchToggleActive {
+  background: rgba(62, 208, 195, 0.15);
+  border-color: rgba(62, 208, 195, 0.4);
+  color: var(--color-secondary-teal);
+}
+
+.webSearchToggleActive:hover:not(:disabled) {
+  background: rgba(62, 208, 195, 0.25);
+  border-color: rgba(62, 208, 195, 0.5);
+  color: var(--color-secondary-teal);
+}
+
+.chatInput {
+  flex: 1;
+  background: transparent;
+  border: none;
+  outline: none;
+  font-family: var(--font-body);
+  font-size: 0.9rem;
+  color: var(--color-background-cream);
+  padding: 0.5rem 0;
+}
+
+.chatInput::placeholder {
+  color: rgba(240, 243, 239, 0.35);
+}
+
+.chatInput:disabled {
+  opacity: 0.5;
+}
+
+.chatSendButton {
+  width: 36px;
+  height: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--color-primary-orange);
+  border: none;
+  border-radius: 8px;
+  color: var(--color-primary-black);
+  cursor: pointer;
+  transition: all 0.2s ease;
+  flex-shrink: 0;
+}
+
+.chatSendButton:hover:not(:disabled) {
+  background: var(--color-secondary-orange);
+  transform: scale(1.05);
+}
+
+.chatSendButton:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+/* Stop Button */
+.chatStopButton {
+  width: 36px;
+  height: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(255, 92, 40, 0.15);
+  border: 1px solid rgba(255, 92, 40, 0.3);
+  border-radius: 8px;
+  color: var(--color-primary-orange);
+  cursor: pointer;
+  transition: all 0.2s ease;
+  flex-shrink: 0;
+}
+
+.chatStopButton:hover {
+  background: rgba(255, 92, 40, 0.25);
+  border-color: var(--color-primary-orange);
+}
+
+/* Avatar Thinking Animation */
+.avatarThinking {
+  animation: avatarPulse 1.5s ease-in-out infinite;
+}
+
+@keyframes avatarPulse {
+  0%, 100% {
+    box-shadow: 0 0 0 0 rgba(255, 92, 40, 0.4);
+    transform: scale(1);
+  }
+  50% {
+    box-shadow: 0 0 0 8px rgba(255, 92, 40, 0);
+    transform: scale(1.05);
+  }
+}
+
+/* Thinking Message in Chat */
+.thinkingMessage {
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 14px;
+  border-bottom-left-radius: 4px;
+  overflow: hidden;
+}
+
+.thinkingToggle {
+  display: block;
+  width: 100%;
+  padding: 0.75rem 1rem;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  text-align: left;
+  transition: background 0.2s ease;
+}
+
+.thinkingToggle:hover {
+  background: rgba(255, 255, 255, 0.02);
+}
+
+.thinkingHeader {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 0.35rem;
+}
+
+.thinkingDot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--color-primary-orange);
+  animation: thinkDotPulse 1s ease-in-out infinite;
+}
+
+@keyframes thinkDotPulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.4; }
+}
+
+.thinkingLabel {
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--color-background-cream);
+  opacity: 0.5;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.thinkingCount {
+  font-family: var(--font-mono);
+  font-size: 0.7rem;
+  color: var(--color-background-cream);
+  opacity: 0.4;
+  background: rgba(255, 255, 255, 0.05);
+  padding: 0.15rem 0.4rem;
+  border-radius: 4px;
+}
+
+.thinkingChevron {
+  margin-left: auto;
+  color: var(--color-background-cream);
+  opacity: 0.4;
+  transition: transform 0.2s ease;
+}
+
+.thinkingChevronExpanded {
+  transform: rotate(180deg);
+}
+
+.thinkingCurrent {
+  font-size: 0.85rem;
+  color: var(--color-background-cream);
+  opacity: 0.8;
+  line-height: 1.4;
+  animation: thinkTextFade 0.3s ease;
+}
+
+@keyframes thinkTextFade {
+  from {
+    opacity: 0;
+    transform: translateY(-2px);
+  }
+  to {
+    opacity: 0.8;
+    transform: translateY(0);
+  }
+}
+
+.thinkingExpanded {
+  padding: 0.5rem 1rem 0.75rem;
+  border-top: 1px solid rgba(255, 255, 255, 0.05);
+  background: rgba(0, 0, 0, 0.1);
+}
+
+.thinkingStep {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.5rem;
+  padding: 0.3rem 0;
+  font-size: 0.75rem;
+  color: var(--color-background-cream);
+  opacity: 0.6;
+  line-height: 1.4;
+}
+
+.thinkingStepNumber {
+  flex-shrink: 0;
+  width: 16px;
+  height: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--font-mono);
+  font-size: 0.6rem;
+  color: var(--color-background-cream);
+  opacity: 0.5;
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 4px;
+}
+
+/* ============================================
+   SCHEDULE CONTAINER - Legacy (keeping for compatibility)
+   ============================================ */
+
+.scheduleContainer {
+  flex: 1;
+  padding: 2rem 2rem 8rem 2rem;
+  max-width: 1000px;
+  margin: 0 auto;
+  width: 100%;
+}
+
+.scheduleHeader {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  margin-bottom: 1.5rem;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+
+.scheduleTitle {
+  font-family: var(--font-heading);
+  font-size: 1.75rem;
+  font-weight: 700;
+  color: var(--color-background-cream);
+  margin-bottom: 0.25rem;
+}
+
+.scheduleSubtitle {
+  font-size: 0.95rem;
+  color: var(--color-background-cream);
+  opacity: 0.6;
+}
+
+/* Summary Stats Row */
+.scheduleSummary {
+  display: flex;
+  gap: 1rem;
+  margin-bottom: 2rem;
+  flex-wrap: wrap;
+}
+
+.summaryCard {
+  flex: 1;
+  min-width: 120px;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 12px;
+  padding: 1rem 1.25rem;
+  text-align: center;
+  transition: all 0.25s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.summaryCard:hover {
+  background: rgba(255, 255, 255, 0.05);
+  border-color: rgba(255, 92, 40, 0.3);
+  transform: translateY(-2px);
+}
+
+.summaryValue {
+  display: block;
+  font-family: var(--font-mono);
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: var(--color-primary-orange);
+  margin-bottom: 0.25rem;
+}
+
+.summaryLabel {
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--color-background-cream);
+  opacity: 0.5;
+}
+
+/* ============================================
+   YEAR ACCORDIONS
+   ============================================ */
+
+.yearAccordions {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  margin-bottom: 2rem;
+}
+
+.yearAccordion {
+  background: rgba(255, 255, 255, 0.02);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 16px;
+  transition: all 0.3s cubic-bezier(0.22, 1, 0.36, 1);
+  will-change: border-color, box-shadow;
+}
+
+.yearAccordion:hover {
+  border-color: rgba(255, 255, 255, 0.15);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+}
+
+.yearAccordionHeader {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1rem 1.25rem;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  transition: all 0.25s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.yearAccordionHeader:hover {
+  background: rgba(255, 255, 255, 0.03);
+}
+
+.yearAccordionHeaderExpanded {
+  background: rgba(255, 92, 40, 0.05);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.yearAccordionLeft {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.yearAccordionChevron {
+  font-size: 0.7rem;
+  color: var(--color-primary-orange);
+  transition: transform 0.3s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.yearAccordionTitle {
+  font-family: var(--font-heading);
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: var(--color-background-cream);
+}
+
+.yearAccordionSubtitle {
+  font-family: var(--font-mono);
+  font-size: 0.8rem;
+  color: var(--color-background-cream);
+  opacity: 0.4;
+}
+
+.yearAccordionRight {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.yearCoopBadge {
+  font-family: var(--font-mono);
+  font-size: 0.7rem;
+  font-weight: 600;
+  padding: 0.25rem 0.6rem;
+  background: rgba(62, 208, 195, 0.15);
+  border: 1px solid rgba(62, 208, 195, 0.3);
+  border-radius: 100px;
+  color: var(--color-secondary-teal);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.yearCredits {
+  font-family: var(--font-mono);
+  font-size: 0.85rem;
+  color: var(--color-background-cream);
+  opacity: 0.6;
+}
+
+.yearAccordionContent {
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height 0.4s cubic-bezier(0.22, 1, 0.36, 1), 
+              padding 0.4s cubic-bezier(0.22, 1, 0.36, 1),
+              opacity 0.3s ease;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.yearAccordionContentExpanded {
+  max-height: 2000px;
+  padding: 1.25rem;
+  opacity: 1;
+  overflow: visible;
+  pointer-events: auto;
+}
+
+/* Semester Grid within accordions */
+.semesterGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 1rem;
+}
+
+/* Stagger animations for semester cards on expand */
+.semesterGrid > *:nth-child(1) { animation: semesterSlideIn 0.35s cubic-bezier(0.22, 1, 0.36, 1) 0.05s both; }
+.semesterGrid > *:nth-child(2) { animation: semesterSlideIn 0.35s cubic-bezier(0.22, 1, 0.36, 1) 0.1s both; }
+.semesterGrid > *:nth-child(3) { animation: semesterSlideIn 0.35s cubic-bezier(0.22, 1, 0.36, 1) 0.15s both; }
+.semesterGrid > *:nth-child(4) { animation: semesterSlideIn 0.35s cubic-bezier(0.22, 1, 0.36, 1) 0.2s both; }
+
+@keyframes semesterSlideIn {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Course options display */
+.courseOptions {
+  display: block;
+  font-size: 0.7rem;
+  color: var(--color-secondary-teal);
+  opacity: 0.8;
+  margin-top: 0.25rem;
+  font-style: italic;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  position: relative;
+  z-index: 0;
+}
+
+/* Clickable course item */
+.courseItemClickable {
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.courseItemClickable:hover {
+  background: rgba(255, 255, 255, 0.08);
+  border-color: rgba(255, 255, 255, 0.15);
+}
+
+/* Course Detail Modal */
+.courseModal {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.7);
+  backdrop-filter: blur(4px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  animation: modalFadeIn 0.2s ease;
+}
+
+@keyframes modalFadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+.courseModalContent {
+  background: var(--color-primary-black);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 16px;
+  padding: 1.75rem;
+  max-width: 420px;
+  width: 90%;
+  position: relative;
+  animation: modalSlideIn 0.25s cubic-bezier(0.22, 1, 0.36, 1);
+  box-shadow: 0 25px 80px rgba(0, 0, 0, 0.5);
+}
+
+@keyframes modalSlideIn {
+  from {
+    opacity: 0;
+    transform: scale(0.95) translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
+.courseModalClose {
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+  background: transparent;
+  border: none;
+  color: var(--color-background-cream);
+  opacity: 0.5;
+  cursor: pointer;
+  padding: 0.25rem;
+  transition: opacity 0.2s ease;
+}
+
+.courseModalClose:hover {
+  opacity: 1;
+}
+
+.courseModalHeader {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  margin-bottom: 0.75rem;
+}
+
+.courseModalCode {
+  font-family: var(--font-mono);
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--color-primary-orange);
+  background: rgba(255, 92, 40, 0.15);
+  padding: 0.35rem 0.65rem;
+  border-radius: 6px;
+}
+
+.courseModalCredits {
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  color: var(--color-background-cream);
+  opacity: 0.5;
+}
+
+.courseModalName {
+  font-family: var(--font-heading);
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: var(--color-background-cream);
+  margin: 0 0 1rem 0;
+  line-height: 1.4;
+}
+
+.courseModalMeta {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 1.25rem;
+  padding-bottom: 1.25rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.courseModalSemester {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.85rem;
+  color: var(--color-background-cream);
+  opacity: 0.7;
+}
+
+.courseModalSemester svg {
+  opacity: 0.5;
+}
+
+.courseModalOptions {
+  background: rgba(62, 208, 195, 0.08);
+  border: 1px solid rgba(62, 208, 195, 0.2);
+  border-radius: 10px;
+  padding: 1rem;
+}
+
+.courseModalOptions h4 {
+  font-family: var(--font-heading);
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: var(--color-secondary-teal);
+  margin: 0 0 0.5rem 0;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.courseModalOptions p {
+  font-size: 0.9rem;
+  line-height: 1.6;
+  color: var(--color-background-cream);
+  opacity: 0.85;
+  margin: 0;
+}
+
+/* ============================================
+   FLOATING COMMAND BAR
+   ============================================ */
+
+.commandBarWrapper {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  padding: 1rem 2rem 1.5rem;
+  background: linear-gradient(to top, rgba(16, 24, 32, 0.98) 70%, rgba(16, 24, 32, 0) 100%);
+  pointer-events: none;
+  z-index: 100;
+}
+
+.commandBar {
+  max-width: 700px;
+  margin: 0 auto;
+  pointer-events: auto;
+}
+
+.commandError {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.75rem 1rem;
+  margin-bottom: 0.75rem;
+  background: rgba(255, 92, 40, 0.15);
+  border: 1px solid rgba(255, 92, 40, 0.3);
+  border-radius: 10px;
+  font-size: 0.85rem;
+  color: var(--color-primary-orange);
+}
+
+.commandError button {
+  background: transparent;
+  border: none;
+  color: var(--color-primary-orange);
+  font-size: 1.2rem;
+  cursor: pointer;
+  padding: 0 0.25rem;
+  opacity: 0.7;
+  transition: opacity 0.2s ease;
+}
+
+.commandError button:hover {
+  opacity: 1;
+}
+
+.commandStatus {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.6rem 1rem;
+  margin-bottom: 0.75rem;
+  background: rgba(62, 208, 195, 0.1);
+  border: 1px solid rgba(62, 208, 195, 0.25);
+  border-radius: 10px;
+  font-family: var(--font-mono);
+  font-size: 0.8rem;
+  color: var(--color-secondary-teal);
+}
+
+.commandStatusDot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--color-secondary-teal);
+  animation: pulseDot 1.2s ease-in-out infinite;
+}
+
+/* Live Thoughts Display Box */
+.thoughtsBox {
+  background: linear-gradient(135deg, rgba(16, 24, 32, 0.95), rgba(26, 34, 42, 0.95));
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 14px;
+  margin-bottom: 0.75rem;
+  overflow: hidden;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+}
+
+.thoughtsBoxHeader {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.75rem 1rem;
+  background: rgba(255, 255, 255, 0.03);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  font-family: var(--font-mono);
+  font-size: 0.7rem;
+  font-weight: 600;
+  color: var(--color-background-cream);
+  opacity: 0.6;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+
+.thoughtsBoxHeader button {
+  margin-left: auto;
+  background: transparent;
+  border: none;
+  color: var(--color-background-cream);
+  font-size: 1.1rem;
+  cursor: pointer;
+  opacity: 0.5;
+  transition: opacity 0.2s ease;
+  padding: 0 0.25rem;
+}
+
+.thoughtsBoxHeader button:hover {
+  opacity: 1;
+}
+
+.thoughtsBoxDot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--color-primary-orange);
+  animation: pulseDot 1.2s ease-in-out infinite;
+  box-shadow: 0 0 8px rgba(255, 92, 40, 0.4);
+}
+
+.thoughtsBoxContent {
+  max-height: 200px;
+  overflow-y: auto;
+  padding: 0.75rem;
+}
+
+.thoughtsBoxContent::-webkit-scrollbar {
+  width: 4px;
+}
+
+.thoughtsBoxContent::-webkit-scrollbar-track {
+  background: rgba(255, 255, 255, 0.05);
+}
+
+.thoughtsBoxContent::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 2px;
+}
+
+.thoughtsBoxItem {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.75rem;
+  padding: 0.5rem 0.75rem;
+  margin-bottom: 0.25rem;
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.02);
+  font-size: 0.85rem;
+  line-height: 1.4;
+  color: var(--color-background-cream);
+  animation: thoughtSlideIn 0.3s ease forwards;
+}
+
+.thoughtsBoxItem:last-child {
+  margin-bottom: 0;
+}
+
+.thoughtsBoxNumber {
+  flex-shrink: 0;
+  width: 20px;
+  height: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--font-mono);
+  font-size: 0.65rem;
+  font-weight: 600;
+  color: var(--color-background-cream);
+  opacity: 0.5;
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 5px;
+}
+
+.commandInputWrapper {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  background: rgba(0, 0, 0, 0.5);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: 14px;
+  padding: 0.5rem 0.5rem 0.5rem 1.25rem;
+  backdrop-filter: blur(10px);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.commandInputWrapper:focus-within {
+  border-color: var(--color-primary-orange);
+  box-shadow: 0 8px 32px rgba(255, 92, 40, 0.15);
+}
+
+.commandInput {
+  flex: 1;
+  background: transparent;
+  border: none;
+  outline: none;
+  font-family: var(--font-body);
+  font-size: 0.95rem;
+  color: var(--color-background-cream);
+  padding: 0.5rem 0;
+}
+
+.commandInput::placeholder {
+  color: rgba(240, 243, 239, 0.35);
+}
+
+.commandInput:disabled {
+  opacity: 0.5;
+}
+
+.commandSendButton {
+  width: 44px;
+  height: 44px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--color-primary-orange);
+  border: none;
+  border-radius: 10px;
+  color: var(--color-primary-black);
+  cursor: pointer;
+  transition: all 0.2s ease;
+  flex-shrink: 0;
+}
+
+.commandSendButton:hover:not(:disabled) {
+  background: var(--color-secondary-orange);
+  transform: scale(1.05);
+}
+
+.commandSendButton:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.commandSpinner {
+  width: 18px;
+  height: 18px;
+  border: 2px solid rgba(16, 24, 32, 0.3);
+  border-top-color: var(--color-primary-black);
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+
+.commandHint {
+  text-align: center;
+  font-size: 0.75rem;
+  color: var(--color-background-cream);
+  opacity: 0.35;
+  margin-top: 0.75rem;
+}
+
+/* Source Note - adjust for new layout */
+.sourceNote {
+  font-size: 0.85rem;
+  color: var(--color-secondary-teal);
+  margin-bottom: 1rem;
+}
+
+.sourceNote strong {
+  color: var(--color-secondary-teal);
+}
+
+.sourceNote a {
+  color: var(--color-secondary-teal);
+  text-decoration: none;
+}
+
+.sourceNote a:hover {
+  text-decoration: underline;
+}
+
+/* Responsive */
+@media (max-width: 1024px) {
+  .splitLayout {
+    flex-direction: column;
+    height: auto;
+    min-height: calc(100vh - 62px - 49px);
+  }
+  
+  .schedulePanel {
+    flex: none;
+    max-height: none;
+    overflow: visible;
+    padding-bottom: 1rem;
+  }
+  
+  .chatPanel {
+    width: 100%;
+    min-width: 100%;
+    height: 450px;
+    border-left: none;
+    border-top: 1px solid rgba(255, 255, 255, 0.08);
+  }
+}
+
+@media (max-width: 768px) {
+  .headerCenter {
+    position: static;
+    transform: none;
+  }
+  
+  .headerSpacer {
+    display: none;
+  }
+  
+  .card, .researchCard {
+    padding: 2rem;
+  }
+  
+  .requirementsGrid {
+    grid-template-columns: 1fr;
+  }
+  
+  .requirementsFooter,
+  .scheduleFooter {
+    flex-direction: column;
+  }
+  
+  .secondaryButton {
+    order: 1;
+  }
+  
+  .schoolGrid {
+    grid-template-columns: 1fr;
+  }
+  
+  .scheduleContainer {
+    padding: 1.5rem 1rem 7rem 1rem;
+  }
+  
+  .schedulePanel {
+    padding: 1.5rem 1rem;
+  }
+  
+  .scheduleSummary {
+    gap: 0.5rem;
+  }
+  
+  .summaryCard {
+    min-width: 80px;
+    padding: 0.75rem;
+  }
+  
+  .summaryValue {
+    font-size: 0.95rem;
+  }
+  
+  .semesterGrid {
+    grid-template-columns: 1fr;
+  }
+  
+  .commandBarWrapper {
+    padding: 0.75rem 1rem 1rem;
+  }
+  
+  .yearAccordionHeader {
+    padding: 0.875rem 1rem;
+  }
+  
+  .yearAccordionTitle {
+    font-size: 1rem;
+  }
+  
+  .chatPanel {
+    height: 400px;
+  }
+  
+  .chatWelcome {
+    padding: 1.5rem 1rem;
+  }
+  
+  .chatSuggestions button {
+    font-size: 0.8rem;
+    padding: 0.65rem 0.85rem;
+  }
+}
+
+/* Print styles - hide chat panel and command bar */
+@media print {
+  .commandBarWrapper {
+    display: none !important;
+  }
+  
+  .chatPanel {
+    display: none !important;
+  }
+  
+  .splitLayout {
+    display: block;
+  }
+  
+  .schedulePanel {
+    width: 100%;
+    max-width: 100%;
+  }
+  
+  .scheduleContainer {
+    padding-bottom: 2rem;
+  }
+  
+  .devPanel {
+    display: none !important;
+  }
+}
+
+/* ============================================
+   DEV MODE PANEL
+   ============================================ */
+
+.devPanel {
+  position: fixed;
+  bottom: 20px;
+  left: 20px;
+  z-index: 9999;
+  font-family: var(--font-mono);
+}
+
+.devPanelTab {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem 0.75rem;
+  background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+  border: 1px solid rgba(255, 92, 40, 0.4);
+  border-radius: 8px;
+  color: var(--color-primary-orange);
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+}
+
+.devPanelTab:hover {
+  background: linear-gradient(135deg, #1f1f3a 0%, #1a2744 100%);
+  border-color: var(--color-primary-orange);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(255, 92, 40, 0.2);
+}
+
+.devPanelTab svg {
+  opacity: 0.8;
+}
+
+.devPanelOpen .devPanelTab {
+  border-bottom-left-radius: 0;
+  border-bottom-right-radius: 0;
+  border-bottom: none;
+}
+
+.devPanelContent {
+  position: absolute;
+  bottom: 100%;
+  left: 0;
+  width: 400px;
+  max-height: 70vh;
+  overflow-y: auto;
+  background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+  border: 1px solid rgba(255, 92, 40, 0.3);
+  border-radius: 12px 12px 12px 0;
+  box-shadow: 0 -8px 32px rgba(0, 0, 0, 0.5);
+  animation: devPanelSlideUp 0.25s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+@keyframes devPanelSlideUp {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.devPanelContent::-webkit-scrollbar {
+  width: 6px;
+}
+
+.devPanelContent::-webkit-scrollbar-track {
+  background: rgba(255, 255, 255, 0.05);
+}
+
+.devPanelContent::-webkit-scrollbar-thumb {
+  background: rgba(255, 92, 40, 0.3);
+  border-radius: 3px;
+}
+
+.devPanelContent::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 92, 40, 0.5);
+}
+
+.devPanelHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.75rem 1rem;
+  background: rgba(255, 92, 40, 0.1);
+  border-bottom: 1px solid rgba(255, 92, 40, 0.2);
+}
+
+.devPanelHeader h4 {
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: var(--color-primary-orange);
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  margin: 0;
+}
+
+.devPanelHeader button {
+  background: transparent;
+  border: none;
+  color: var(--color-background-cream);
+  font-size: 1.25rem;
+  cursor: pointer;
+  opacity: 0.5;
+  transition: opacity 0.2s ease;
+  padding: 0;
+  line-height: 1;
+}
+
+.devPanelHeader button:hover {
+  opacity: 1;
+}
+
+.devPanelSection {
+  padding: 1rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.devPanelSection:last-child {
+  border-bottom: none;
+}
+
+.devPanelSection h5 {
+  font-size: 0.7rem;
+  font-weight: 600;
+  color: var(--color-secondary-teal);
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  margin: 0 0 0.75rem 0;
+}
+
+.devPanelGrid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 0.5rem;
+}
+
+.devPanelItem {
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+  padding: 0.5rem;
+  background: rgba(255, 255, 255, 0.03);
+  border-radius: 6px;
+}
+
+.devPanelLabel {
+  font-size: 0.65rem;
+  color: var(--color-background-cream);
+  opacity: 0.5;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.devPanelValue {
+  font-size: 0.8rem;
+  color: var(--color-background-cream);
+  word-break: break-word;
+}
+
+.devPanelDetails {
+  margin-top: 0.5rem;
+}
+
+.devPanelDetails summary {
+  font-size: 0.75rem;
+  color: var(--color-background-cream);
+  opacity: 0.7;
+  cursor: pointer;
+  padding: 0.5rem;
+  background: rgba(255, 255, 255, 0.03);
+  border-radius: 6px;
+  transition: all 0.2s ease;
+}
+
+.devPanelDetails summary:hover {
+  opacity: 1;
+  background: rgba(255, 255, 255, 0.06);
+}
+
+.devPanelDetails[open] summary {
+  border-radius: 6px 6px 0 0;
+  background: rgba(255, 92, 40, 0.1);
+  color: var(--color-primary-orange);
+}
+
+.devPanelPre {
+  margin: 0;
+  padding: 0.75rem;
+  background: rgba(0, 0, 0, 0.4);
+  border-radius: 0 0 6px 6px;
+  font-size: 0.65rem;
+  line-height: 1.5;
+  color: var(--color-background-cream);
+  opacity: 0.8;
+  overflow-x: auto;
+  max-height: 200px;
+  overflow-y: auto;
+}
+
+.devPanelPre::-webkit-scrollbar {
+  width: 4px;
+  height: 4px;
+}
+
+.devPanelPre::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.devPanelPre::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.15);
+  border-radius: 2px;
+}
+
+@media (max-width: 768px) {
+  .devPanel {
+    bottom: 10px;
+    left: 10px;
+  }
+  
+  .devPanelContent {
+    width: calc(100vw - 20px);
+    max-height: 60vh;
+  }
+  
+  .devPanelGrid {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* Transcript parsing states */
+.loadingSpinner {
+  width: 16px;
+  height: 16px;
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  border-top-color: white;
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+  margin-right: 8px;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.errorMessage {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 16px;
+  background: rgba(239, 68, 68, 0.1);
+  border: 1px solid rgba(239, 68, 68, 0.3);
+  border-radius: 8px;
+  color: #ef4444;
+  font-size: 0.9rem;
+  margin-bottom: 16px;
+}
+
+.errorMessage svg {
+  flex-shrink: 0;
+}
+
+/* ========================================
+   Course Confirmation Screen
+   ======================================== */
+
+.confirmCoursesContainer {
+  margin: 1.5rem 0;
+}
+
+.emptyCoursesMessage {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 3rem 2rem;
+  text-align: center;
+  color: var(--color-background-cream);
+  opacity: 0.7;
+}
+
+.emptyCoursesMessage svg {
+  margin-bottom: 1rem;
+  opacity: 0.5;
+}
+
+.emptyCoursesMessage p {
+  margin: 0;
+  font-size: 1rem;
+}
+
+.emptyCoursesHint {
+  font-size: 0.85rem !important;
+  opacity: 0.6;
+  margin-top: 0.5rem !important;
+}
+
+.confirmCoursesList {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  max-height: 400px;
+  overflow-y: auto;
+  padding-right: 0.5rem;
+}
+
+.confirmCoursesList::-webkit-scrollbar {
+  width: 6px;
+}
+
+.confirmCoursesList::-webkit-scrollbar-track {
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 3px;
+}
+
+.confirmCoursesList::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 3px;
+}
+
+.confirmCourseItem {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 0.75rem 1rem;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 10px;
+  transition: all 0.2s ease;
+}
+
+.confirmCourseItem:hover {
+  background: rgba(255, 255, 255, 0.06);
+  border-color: rgba(255, 255, 255, 0.12);
+}
+
+.confirmCourseItemEditing {
+  background: rgba(62, 208, 195, 0.08);
+  border-color: rgba(62, 208, 195, 0.3);
+}
+
+.confirmCourseInfo {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  min-width: 0;
+}
+
+.confirmCourseCode {
+  font-family: var(--font-mono);
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: var(--color-secondary-teal);
+}
+
+.confirmCourseName {
+  font-size: 0.85rem;
+  color: var(--color-background-cream);
+  opacity: 0.8;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.confirmCourseMeta {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  flex-shrink: 0;
+}
+
+.confirmCourseCredits {
+  font-family: var(--font-mono);
+  font-size: 0.8rem;
+  color: var(--color-background-cream);
+  opacity: 0.6;
+}
+
+.confirmCourseGrade {
+  font-family: var(--font-mono);
+  font-size: 0.8rem;
+  font-weight: 600;
+  padding: 0.2rem 0.5rem;
+  background: rgba(181, 232, 0, 0.15);
+  color: var(--color-accent-lime);
+  border-radius: 4px;
+}
+
+.confirmCourseSemester {
+  font-size: 0.75rem;
+  color: var(--color-background-cream);
+  opacity: 0.5;
+  white-space: nowrap;
+}
+
+.confirmCourseActions {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  opacity: 0;
+  transition: opacity 0.2s ease;
+}
+
+.confirmCourseItem:hover .confirmCourseActions {
+  opacity: 1;
+}
+
+.confirmCourseEditBtn,
+.confirmCourseDeleteBtn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 6px;
+  color: var(--color-background-cream);
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.confirmCourseEditBtn:hover {
+  background: rgba(62, 208, 195, 0.2);
+  border-color: rgba(62, 208, 195, 0.4);
+  color: var(--color-secondary-teal);
+}
+
+.confirmCourseDeleteBtn:hover {
+  background: rgba(239, 68, 68, 0.2);
+  border-color: rgba(239, 68, 68, 0.4);
+  color: #ef4444;
+}
+
+/* Edit form */
+.confirmCourseEditForm {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.confirmCourseEditRow {
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+}
+
+.confirmCourseInput {
+  flex: 1;
+  padding: 0.5rem 0.75rem;
+  background: rgba(0, 0, 0, 0.3);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: 6px;
+  color: var(--color-background-cream);
+  font-family: var(--font-body);
+  font-size: 0.85rem;
+  transition: border-color 0.2s ease;
+}
+
+.confirmCourseInput:focus {
+  outline: none;
+  border-color: var(--color-secondary-teal);
+}
+
+.confirmCourseInputWide {
+  flex: 2;
+}
+
+.confirmCourseInputSmall {
+  width: 70px;
+  flex: none;
+  padding: 0.5rem 0.75rem;
+  background: rgba(0, 0, 0, 0.3);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: 6px;
+  color: var(--color-background-cream);
+  font-family: var(--font-body);
+  font-size: 0.85rem;
+  transition: border-color 0.2s ease;
+}
+
+.confirmCourseInputSmall:focus {
+  outline: none;
+  border-color: var(--color-secondary-teal);
+}
+
+.confirmCourseSaveBtn {
+  padding: 0.5rem 1rem;
+  background: var(--color-secondary-teal);
+  border: none;
+  border-radius: 6px;
+  color: var(--color-background-navy);
+  font-family: var(--font-body);
+  font-size: 0.85rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  white-space: nowrap;
+}
+
+.confirmCourseSaveBtn:hover {
+  background: var(--color-accent-lime);
+  transform: translateY(-1px);
+}
+
+.confirmCoursesSummary {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  margin-top: 1rem;
+  padding: 0.75rem;
+  background: rgba(255, 255, 255, 0.03);
+  border-radius: 8px;
+  font-family: var(--font-mono);
+  font-size: 0.85rem;
+  color: var(--color-background-cream);
+  opacity: 0.7;
+}
+
+.confirmCoursesDivider {
+  opacity: 0.4;
+}
+
+/* ============================================
+   TRANSFER CREDITS SECTION
+   ============================================ */
+
+.transferCreditsSection {
+  background: linear-gradient(135deg, rgba(139, 92, 246, 0.08) 0%, rgba(139, 92, 246, 0.03) 100%);
+  border: 1px solid rgba(139, 92, 246, 0.25);
+  border-radius: 12px;
+  padding: 1.25rem;
+  margin-bottom: 1.5rem;
+}
+
+.transferCreditsHeader {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  margin-bottom: 1rem;
+  padding-bottom: 0.75rem;
+  border-bottom: 1px solid rgba(139, 92, 246, 0.2);
+}
+
+.transferCreditsHeader svg {
+  color: rgb(139, 92, 246);
+}
+
+.transferCreditsHeader h3 {
+  font-family: var(--font-heading);
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--color-background-cream);
+  margin: 0;
+  flex: 1;
+}
+
+.transferCreditsTotal {
+  font-family: var(--font-mono);
+  font-size: 0.85rem;
+  color: rgb(139, 92, 246);
+  background: rgba(139, 92, 246, 0.15);
+  padding: 0.25rem 0.75rem;
+  border-radius: 20px;
+  font-weight: 600;
+}
+
+.transferCreditsGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 0.5rem;
+}
+
+.transferCourseItem {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  background: rgba(0, 0, 0, 0.2);
+  padding: 0.5rem 0.75rem;
+  border-radius: 6px;
+  border: 1px solid rgba(139, 92, 246, 0.15);
+}
+
+.transferCourseCode {
+  font-family: var(--font-mono);
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: rgb(139, 92, 246);
+  white-space: nowrap;
+}
+
+.transferCourseName {
+  font-family: var(--font-body);
+  font-size: 0.8rem;
+  color: var(--color-background-cream);
+  opacity: 0.8;
+  flex: 1;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.transferCourseCredits {
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  color: var(--color-background-cream);
+  opacity: 0.6;
+  white-space: nowrap;
+}
+
+/* ============================================
+   COMPLETED SEMESTER STYLES
+   ============================================ */
+
+.semesterCompleted {
+  position: relative;
+  opacity: 0.85;
+  border-color: rgba(74, 222, 128, 0.3) !important;
+  background: linear-gradient(135deg, rgba(74, 222, 128, 0.06) 0%, rgba(74, 222, 128, 0.02) 100%) !important;
+}
+
+.semesterCompleted::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  border-radius: inherit;
+  pointer-events: none;
+}
+
+.semesterCompleted:hover {
+  transform: none !important;
+  box-shadow: 0 8px 24px rgba(74, 222, 128, 0.1) !important;
+  border-color: rgba(74, 222, 128, 0.4) !important;
+}
+
+.completedBadge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  background: rgba(74, 222, 128, 0.2);
+  color: rgb(74, 222, 128);
+  padding: 0.2rem 0.6rem;
+  border-radius: 20px;
+  font-family: var(--font-body);
+  font-size: 0.7rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-left: auto;
+}
+
+.completedBadge svg {
+  flex-shrink: 0;
+}
+
+/* Completed course item - no drag handle, muted styling */
+.courseItemCompleted {
+  cursor: default;
+  opacity: 0.8;
+  background: rgba(74, 222, 128, 0.05);
+  border: 1px solid rgba(74, 222, 128, 0.15);
+}
+
+.courseItemCompleted:hover {
+  transform: none;
+  background: rgba(74, 222, 128, 0.08);
+}
+
+.courseItemCompleted .courseCode {
+  color: rgb(74, 222, 128);
+}
+
+.courseItemCompleted .courseCredits {
+  color: rgba(74, 222, 128, 0.8);
+}
+
+.courseItemCompleted .courseName {
+  opacity: 0.7;
+}
+
+/* Auto-detected semester note */
+.autoDetectedNote {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-family: var(--font-body);
+  font-size: 0.8rem;
+  color: var(--color-secondary-teal);
+  background: rgba(62, 208, 195, 0.1);
+  padding: 0.5rem 0.75rem;
+  border-radius: 6px;
+  margin-bottom: 0.5rem;
+}
+
+.autoDetectedNote svg {
+  flex-shrink: 0;
+}
