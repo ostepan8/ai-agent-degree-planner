@@ -15,8 +15,17 @@ const chivoMono = Chivo_Mono({
 })
 
 export const metadata: Metadata = {
-  title: 'Northeastern Degree Planner | Subconscious Demo',
+  title: 'AI Degree Planner | Subconscious Demo',
   description: 'Build your 4-year degree plan with AI agents that search official university catalogs in real-time.',
+  icons: {
+    icon: '/Subconscious_Logo_Graphic.png',
+    apple: '/Subconscious_Logo_Graphic.png',
+  },
+  openGraph: {
+    title: 'AI Degree Planner',
+    description: 'Build your 4-year degree plan with AI agents that search official university catalogs in real-time.',
+    images: ['/Subconscious_Logo_Graphic.png'],
+  },
 }
 
 export default function RootLayout({
