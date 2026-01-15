@@ -36,13 +36,10 @@ export const ScheduleStep = React.memo(function ScheduleStep({
     // Track if this is the initial render (to avoid saving on load)
     const isInitialMount = useRef(true)
 
-    // Debug: Log when component mounts and when userEmail changes
+    // Mark as no longer initial after first render
     useEffect(() => {
-        console.log('ScheduleStep: Component mounted with userEmail:', userEmail)
-        // Mark as no longer initial after first render
         const timer = setTimeout(() => {
             isInitialMount.current = false
-            console.log('ScheduleStep: Initial mount phase complete, saves now enabled')
         }, 500)
         return () => clearTimeout(timer)
     }, [userEmail])
@@ -105,42 +102,14 @@ export const ScheduleStep = React.memo(function ScheduleStep({
 
     // Save schedule to database (debounced)
     const saveScheduleToDb = useCallback((scheduleToSave: ExtendedSchedulePlan) => {
-        // Log call stack to debug what's triggering saves
-        console.log('saveScheduleToDb: Called from:', new Error().stack?.split('\n')[2])
+        if (!userEmail) return
+        if (isInitialMount.current) return
 
-        if (!userEmail) {
-            console.warn('saveScheduleToDb: No userEmail, skipping save')
-            return
-        }
-
-        // Skip saves during initial mount phase
-        if (isInitialMount.current) {
-            console.log('saveScheduleToDb: Skipping save during initial mount')
-            return
-        }
-
-        // Count total courses for logging
-        const totalCourses = (scheduleToSave.semesters || []).reduce((sum, sem) => {
-            if (sem.type === 'academic' && sem.courses) {
-                return sum + sem.courses.length
-            }
-            return sum
-        }, 0)
-
-        // Clear any existing timeout
         if (saveTimeoutRef.current) {
             clearTimeout(saveTimeoutRef.current)
         }
 
-        // Debounce saves by 1 second (reduced from 2 for faster feedback)
-        console.log('saveScheduleToDb: Scheduling save for', userEmail)
-        console.log('saveScheduleToDb: Schedule has',
-            scheduleToSave.semesters?.length, 'semesters,',
-            totalCourses, 'courses,',
-            scheduleToSave.totalCredits, 'credits')
-
         saveTimeoutRef.current = setTimeout(() => {
-            console.log('saveScheduleToDb: Executing save NOW for', userEmail)
             fetch('/api/log', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
@@ -148,17 +117,10 @@ export const ScheduleStep = React.memo(function ScheduleStep({
                     email: userEmail,
                     schedule: scheduleToSave,
                 }),
-            }).then(async (res) => {
-                const data = await res.json()
-                if (res.ok && data.success) {
-                    console.log('saveScheduleToDb: ✓ Save successful -', data.logged)
-                } else {
-                    console.error('saveScheduleToDb: ✗ Save failed -', data.error || res.status)
-                }
-            }).catch((err) => {
-                console.error('saveScheduleToDb: Network error:', err)
+            }).catch(() => {
+                // Silent fail - user can retry
             })
-        }, 1000)  // Reduced to 1 second for faster persistence
+        }, 1000)
     }, [userEmail])
 
     // Cleanup timeout on unmount
@@ -1004,9 +966,7 @@ export const ScheduleStep = React.memo(function ScheduleStep({
                                     throw new Error(data.message || 'Unknown error')
                             }
                         } catch (parseError) {
-                            if (parseError instanceof SyntaxError) {
-                                console.warn('Failed to parse SSE data:', line)
-                            } else {
+                            if (!(parseError instanceof SyntaxError)) {
                                 throw parseError
                             }
                         }
@@ -1015,10 +975,8 @@ export const ScheduleStep = React.memo(function ScheduleStep({
             }
         } catch (error) {
             if ((error as Error).name === 'AbortError') {
-                // Request was cancelled, ignore
                 return
             }
-            console.error('Chat error:', error)
             setCommandError(error instanceof Error ? error.message : 'Failed to process request')
         } finally {
             setIsProcessingCommand(false)

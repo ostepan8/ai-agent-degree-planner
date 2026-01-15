@@ -318,7 +318,6 @@ export default function DemoPage() {
                                         setCurrentStep('schedule')
                                         
                                         // Save schedule to database
-                                        console.log('proceedWithGeneration: Saving new schedule to database')
                                         fetch('/api/log', {
                                             method: 'POST',
                                             headers: { 'Content-Type': 'application/json' },
@@ -331,15 +330,8 @@ export default function DemoPage() {
                                                 completedCoursesCount: extractedCourses.length,
                                                 schedule: data.schedule,
                                             }),
-                                        }).then(async (res) => {
-                                            const result = await res.json()
-                                            if (result.success) {
-                                                console.log('proceedWithGeneration: Schedule saved successfully')
-                                            } else {
-                                                console.error('proceedWithGeneration: Save failed:', result.error)
-                                            }
-                                        }).catch((err) => {
-                                            console.error('proceedWithGeneration: Network error saving schedule:', err)
+                                        }).catch(() => {
+                                            // Silent fail
                                         })
                                     } else {
                                         throw new Error('No schedule data received')
@@ -350,9 +342,7 @@ export default function DemoPage() {
                                     throw new Error(data.message)
                             }
                         } catch (parseError) {
-                            if (parseError instanceof SyntaxError) {
-                                console.warn('Failed to parse SSE data:', line)
-                            } else {
+                            if (!(parseError instanceof SyntaxError)) {
                                 throw parseError
                             }
                         }
@@ -360,11 +350,7 @@ export default function DemoPage() {
                 }
             }
 
-            if (!receivedComplete) {
-                console.warn('Stream ended without complete event')
-            }
         } catch (error) {
-            console.error('Generation error:', error)
             setGenerationError(error instanceof Error ? error.message : 'Failed to generate schedule')
         }
     }, [selectedSchool, majorData, extractedCourses, isFreshman, elapsedTime, addThought, completeCurrentThought])
@@ -373,31 +359,19 @@ export default function DemoPage() {
     const handleGenerateSchedule = useCallback(async (prefs: Preferences) => {
         if (!selectedSchool || !majorData) return
 
-        console.log('handleGenerateSchedule: Starting with email:', prefs.email)
-        console.log('handleGenerateSchedule: Full preferences:', prefs)
-
         setPreferences(prefs)
         setPendingPreferences(prefs)
 
         // Check if user has an existing schedule
         try {
             const emailToCheck = prefs.email || ''
-            console.log('handleGenerateSchedule: Checking for existing schedule with email:', emailToCheck)
-            
-            // Add cache-busting timestamp to prevent stale data
             const response = await fetch(
                 `/api/user/schedule?email=${encodeURIComponent(emailToCheck)}&_t=${Date.now()}`,
                 { cache: 'no-store' }
             )
             const data = await response.json()
 
-            console.log('handleGenerateSchedule: API response:', data)
-            console.log('handleGenerateSchedule: data.exists =', data.exists, 
-                ', data.schedule =', !!data.schedule, ', debug =', data.debug)
-
             if (data.exists && data.schedule) {
-                // User has an existing schedule - show modal
-                console.log('handleGenerateSchedule: Found existing schedule, showing modal')
                 setExistingScheduleData({
                     schedule: data.schedule,
                     school: data.school,
@@ -406,37 +380,28 @@ export default function DemoPage() {
                 })
                 setShowExistingModal(true)
                 return
-            } else {
-                console.log('handleGenerateSchedule: No existing schedule found, proceeding with generation')
             }
-        } catch (error) {
-            console.error('handleGenerateSchedule: Error checking for existing schedule:', error)
+        } catch {
             // Continue with generation if check fails
         }
 
-        // No existing schedule - proceed with generation
-        console.log('handleGenerateSchedule: Calling proceedWithGeneration')
         await proceedWithGeneration(prefs)
     }, [selectedSchool, majorData, proceedWithGeneration])
 
     // Modal handlers
     const handleLoadExisting = useCallback(() => {
         if (existingScheduleData?.schedule && pendingPreferences) {
-            console.log('handleLoadExisting: Loading schedule for email:', pendingPreferences.email)
-            setPreferences(pendingPreferences)  // Save the email first!
+            setPreferences(pendingPreferences)
             
             // Parse schedule if it's a string (from database)
             let scheduleToLoad = existingScheduleData.schedule
             if (typeof scheduleToLoad === 'string') {
-                console.log('handleLoadExisting: Parsing schedule from JSON string')
                 try {
                     scheduleToLoad = JSON.parse(scheduleToLoad)
-                } catch (e) {
-                    console.error('handleLoadExisting: Failed to parse schedule:', e)
+                } catch {
+                    // Keep as-is if parsing fails
                 }
             }
-            console.log('handleLoadExisting: Schedule loaded with', 
-                scheduleToLoad.semesters?.length, 'semesters')
             
             setGeneratedSchedule(scheduleToLoad)
             setCurrentStep('schedule')
