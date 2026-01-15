@@ -575,7 +575,7 @@ export async function POST(request: NextRequest) {
 
     // Generate schedule ID and store the schedule
     const scheduleId = generateScheduleId();
-    storeSchedule(scheduleId, currentSchedule);
+    await storeSchedule(scheduleId, currentSchedule);
     console.log("Stored schedule with ID:", scheduleId);
 
     // Extract school context for personalized prompts
@@ -974,13 +974,13 @@ YOUR JOB IS NOT COMPLETE UNTIL YOU HAVE CALLED A TOOL TO IMPLEMENT THE USER'S RE
           let fullContent = "";
           let lastSentThoughts: string[] = [];
           let lastSentToolCalls: string[] = [];
-          let lastKnownVersion = getScheduleVersion(scheduleId);
+          let lastKnownVersion = await getScheduleVersion(scheduleId);
 
           // Helper to check for schedule updates and send tool_result
-          const checkForScheduleUpdate = () => {
-            const updateInfo = getLastUpdate(scheduleId);
+          const checkForScheduleUpdate = async () => {
+            const updateInfo = await getLastUpdate(scheduleId);
             if (updateInfo && updateInfo.version > lastKnownVersion) {
-              const latestSchedule = getSchedule(scheduleId);
+              const latestSchedule = await getSchedule(scheduleId);
               if (latestSchedule) {
                 console.log(
                   `✅ Schedule updated! Version ${lastKnownVersion} -> ${updateInfo.version} by ${updateInfo.tool}`
@@ -1012,7 +1012,7 @@ YOUR JOB IS NOT COMPLETE UNTIL YOU HAVE CALLED A TOOL TO IMPLEMENT THE USER'S RE
             }
 
             // Check for schedule updates on every event
-            checkForScheduleUpdate();
+            await checkForScheduleUpdate();
 
             if (event.type === "delta") {
               fullContent += event.content;
@@ -1061,7 +1061,7 @@ YOUR JOB IS NOT COMPLETE UNTIL YOU HAVE CALLED A TOOL TO IMPLEMENT THE USER'S RE
               }
             } else if (event.type === "done") {
               // Final check for any pending updates
-              checkForScheduleUpdate();
+              await checkForScheduleUpdate();
               console.log("Stream done. RunId:", event.runId);
 
               controller.enqueue(
@@ -1108,7 +1108,7 @@ YOUR JOB IS NOT COMPLETE UNTIL YOU HAVE CALLED A TOOL TO IMPLEMENT THE USER'S RE
           }
 
           // Get the final schedule from the store
-          const finalSchedule = getSchedule(scheduleId);
+          const finalSchedule = await getSchedule(scheduleId);
 
           if (!finalSchedule) {
             controller.enqueue(

@@ -54,7 +54,7 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const schedule = getSchedule(scheduleId);
+    const schedule = await getSchedule(scheduleId);
 
     if (!schedule) {
       return Response.json(
@@ -137,7 +137,7 @@ export async function POST(request: NextRequest) {
       semesters: updatedSemesters,
     };
 
-    updateSchedule(scheduleId, updatedSchedule, "add_semester");
+    await updateSchedule(scheduleId, updatedSchedule, "add_semester");
 
     console.log(`✅ SUCCESS: Added ${type} semester "${term}"`);
 

@@ -48,7 +48,7 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const schedule = getSchedule(scheduleId);
+    const schedule = await getSchedule(scheduleId);
 
     if (!schedule) {
       return Response.json(
@@ -122,7 +122,7 @@ export async function POST(request: NextRequest) {
       totalCredits,
     };
 
-    updateSchedule(scheduleId, updatedSchedule, 'set_semester_type');
+    await updateSchedule(scheduleId, updatedSchedule, 'set_semester_type');
 
     console.log(`✅ SUCCESS: Changed "${term}" from ${oldType} to ${newType}`);
 

@@ -1,29 +1,26 @@
+import { createClient, SupabaseClient } from '@supabase/supabase-js';
 import type { SchedulePlan, StudentContext } from './schemas';
 
-// In-memory schedule store with TTL
+// In-memory fallback store (for local development without Supabase)
 interface StoredSchedule {
   schedule: SchedulePlan;
   expires: number;
-  version: number;  // Increments on each update
-  lastModified: number;  // Timestamp of last modification
-  lastUpdatedBy?: string;  // Which tool last updated this schedule
+  version: number;
+  lastModified: number;
+  lastUpdatedBy?: string;
 }
 
-// Use globalThis to survive Next.js hot reloads in development
-// This ensures the store persists when modules are recompiled
 const globalKey = '__scheduleStore__';
 
-// Extend globalThis type for TypeScript
 declare global {
   // eslint-disable-next-line no-var
   var __scheduleStore__: Map<string, StoredSchedule> | undefined;
 }
 
-// Get or create the global schedules map
 function getSchedulesMap(): Map<string, StoredSchedule> {
   if (!globalThis[globalKey]) {
     globalThis[globalKey] = new Map<string, StoredSchedule>();
-    console.log('📦 Created new global schedule store');
+    console.log('📦 Created in-memory schedule store (fallback mode)');
   }
   return globalThis[globalKey];
 }
@@ -31,129 +28,286 @@ function getSchedulesMap(): Map<string, StoredSchedule> {
 // Default TTL: 30 minutes
 const DEFAULT_TTL_MS = 30 * 60 * 1000;
 
+// Supabase client singleton
+let supabaseClient: SupabaseClient | null = null;
+
+function getSupabaseClient(): SupabaseClient | null {
+  if (supabaseClient) return supabaseClient;
+  
+  const url = process.env.SUPABASE_URL;
+  const key = process.env.SUPABASE_ANON_KEY;
+  
+  if (!url || !key) {
+    return null;
+  }
+  
+  supabaseClient = createClient(url, key);
+  return supabaseClient;
+}
+
+function isSupabaseConfigured(): boolean {
+  return !!process.env.SUPABASE_URL && !!process.env.SUPABASE_ANON_KEY;
+}
+
 /**
  * Store a schedule with a given ID
  */
-export function storeSchedule(id: string, schedule: SchedulePlan, ttlMs: number = DEFAULT_TTL_MS): void {
-  const schedules = getSchedulesMap();
-  schedules.set(id, {
-    schedule,
-    expires: Date.now() + ttlMs,
-    version: 1,
-    lastModified: Date.now(),
-  });
-  console.log(`📦 Stored schedule ${id}, store size: ${schedules.size}`);
+export async function storeSchedule(
+  id: string, 
+  schedule: SchedulePlan, 
+  ttlMs: number = DEFAULT_TTL_MS
+): Promise<void> {
+  const supabase = getSupabaseClient();
+  
+  if (supabase) {
+    const expiresAt = new Date(Date.now() + ttlMs).toISOString();
+    
+    const { error } = await supabase
+      .from('schedules')
+      .upsert({
+        id,
+        schedule,
+        version: 1,
+        expires_at: expiresAt,
+        last_modified: new Date().toISOString(),
+        last_updated_by: null,
+      });
+    
+    if (error) {
+      console.error('Supabase storeSchedule error:', error);
+      throw new Error(`Failed to store schedule: ${error.message}`);
+    }
+    
+    console.log(`📦 Stored schedule ${id} in Supabase`);
+  } else {
+    // Fallback to in-memory
+    const schedules = getSchedulesMap();
+    schedules.set(id, {
+      schedule,
+      expires: Date.now() + ttlMs,
+      version: 1,
+      lastModified: Date.now(),
+    });
+    console.log(`📦 Stored schedule ${id} in memory (Supabase not configured)`);
+  }
 }
 
 /**
  * Get a schedule by ID, returns null if not found or expired
  */
-export function getSchedule(id: string): SchedulePlan | null {
-  const schedules = getSchedulesMap();
-  const stored = schedules.get(id);
+export async function getSchedule(id: string): Promise<SchedulePlan | null> {
+  const supabase = getSupabaseClient();
   
-  if (!stored) {
-    console.log(`📦 Schedule ${id} not found, store size: ${schedules.size}`);
-    return null;
+  if (supabase) {
+    const { data, error } = await supabase
+      .from('schedules')
+      .select('schedule, expires_at')
+      .eq('id', id)
+      .single();
+    
+    if (error || !data) {
+      console.log(`📦 Schedule ${id} not found in Supabase`);
+      return null;
+    }
+    
+    // Check if expired
+    if (new Date(data.expires_at) < new Date()) {
+      // Delete expired schedule
+      await supabase.from('schedules').delete().eq('id', id);
+      console.log(`📦 Schedule ${id} expired, deleted from Supabase`);
+      return null;
+    }
+    
+    return data.schedule as SchedulePlan;
+  } else {
+    // Fallback to in-memory
+    const schedules = getSchedulesMap();
+    const stored = schedules.get(id);
+    
+    if (!stored) {
+      console.log(`📦 Schedule ${id} not found in memory`);
+      return null;
+    }
+    
+    if (stored.expires < Date.now()) {
+      schedules.delete(id);
+      return null;
+    }
+    
+    return stored.schedule;
   }
-  
-  // Check if expired
-  if (stored.expires < Date.now()) {
-    schedules.delete(id);
-    return null;
-  }
-  
-  return stored.schedule;
 }
 
 /**
  * Update an existing schedule, returns false if not found
  */
-export function updateSchedule(id: string, schedule: SchedulePlan, updatedBy?: string): boolean {
-  const schedules = getSchedulesMap();
-  const stored = schedules.get(id);
+export async function updateSchedule(
+  id: string, 
+  schedule: SchedulePlan, 
+  updatedBy?: string
+): Promise<boolean> {
+  const supabase = getSupabaseClient();
   
-  if (!stored) {
-    return false;
+  if (supabase) {
+    // First check if it exists
+    const { data: existing } = await supabase
+      .from('schedules')
+      .select('version')
+      .eq('id', id)
+      .single();
+    
+    if (!existing) {
+      console.log(`📦 Schedule ${id} not found for update`);
+      return false;
+    }
+    
+    const { error } = await supabase
+      .from('schedules')
+      .update({
+        schedule,
+        version: existing.version + 1,
+        last_modified: new Date().toISOString(),
+        last_updated_by: updatedBy || null,
+      })
+      .eq('id', id);
+    
+    if (error) {
+      console.error('Supabase updateSchedule error:', error);
+      return false;
+    }
+    
+    console.log(`📦 Updated schedule ${id} to version ${existing.version + 1} by ${updatedBy || 'unknown'}`);
+    return true;
+  } else {
+    // Fallback to in-memory
+    const schedules = getSchedulesMap();
+    const stored = schedules.get(id);
+    
+    if (!stored) {
+      return false;
+    }
+    
+    stored.schedule = schedule;
+    stored.version++;
+    stored.lastModified = Date.now();
+    stored.lastUpdatedBy = updatedBy;
+    console.log(`📦 Updated schedule ${id} to version ${stored.version} in memory`);
+    return true;
   }
-  
-  // Update schedule, increment version, keep the same expiry
-  stored.schedule = schedule;
-  stored.version++;
-  stored.lastModified = Date.now();
-  stored.lastUpdatedBy = updatedBy;
-  console.log(`📦 Updated schedule ${id} to version ${stored.version} by ${updatedBy || 'unknown'}`);
-  return true;
 }
 
 /**
  * Get info about the last update
  */
-export function getLastUpdate(id: string): { version: number; tool: string } | null {
-  const schedules = getSchedulesMap();
-  const stored = schedules.get(id);
-  if (!stored) return null;
-  return { version: stored.version, tool: stored.lastUpdatedBy || 'unknown' };
+export async function getLastUpdate(id: string): Promise<{ version: number; tool: string } | null> {
+  const supabase = getSupabaseClient();
+  
+  if (supabase) {
+    const { data } = await supabase
+      .from('schedules')
+      .select('version, last_updated_by')
+      .eq('id', id)
+      .single();
+    
+    if (!data) return null;
+    return { version: data.version, tool: data.last_updated_by || 'unknown' };
+  } else {
+    const schedules = getSchedulesMap();
+    const stored = schedules.get(id);
+    if (!stored) return null;
+    return { version: stored.version, tool: stored.lastUpdatedBy || 'unknown' };
+  }
 }
 
 /**
  * Get the version number for a schedule (for change detection)
  */
-export function getScheduleVersion(id: string): number {
-  const schedules = getSchedulesMap();
-  const stored = schedules.get(id);
-  return stored?.version || 0;
+export async function getScheduleVersion(id: string): Promise<number> {
+  const supabase = getSupabaseClient();
+  
+  if (supabase) {
+    const { data } = await supabase
+      .from('schedules')
+      .select('version')
+      .eq('id', id)
+      .single();
+    
+    return data?.version || 0;
+  } else {
+    const schedules = getSchedulesMap();
+    const stored = schedules.get(id);
+    return stored?.version || 0;
+  }
 }
 
 /**
  * Get schedule with metadata
  */
-export function getScheduleWithMeta(id: string): { schedule: SchedulePlan; version: number } | null {
-  const schedules = getSchedulesMap();
-  const stored = schedules.get(id);
+export async function getScheduleWithMeta(id: string): Promise<{ schedule: SchedulePlan; version: number } | null> {
+  const supabase = getSupabaseClient();
   
-  if (!stored) {
-    return null;
+  if (supabase) {
+    const { data } = await supabase
+      .from('schedules')
+      .select('schedule, version, expires_at')
+      .eq('id', id)
+      .single();
+    
+    if (!data) return null;
+    
+    // Check if expired
+    if (new Date(data.expires_at) < new Date()) {
+      await supabase.from('schedules').delete().eq('id', id);
+      return null;
+    }
+    
+    return { schedule: data.schedule as SchedulePlan, version: data.version };
+  } else {
+    const schedules = getSchedulesMap();
+    const stored = schedules.get(id);
+    
+    if (!stored) return null;
+    
+    if (stored.expires < Date.now()) {
+      schedules.delete(id);
+      return null;
+    }
+    
+    return { schedule: stored.schedule, version: stored.version };
   }
-  
-  // Check if expired
-  if (stored.expires < Date.now()) {
-    schedules.delete(id);
-    return null;
-  }
-  
-  return { schedule: stored.schedule, version: stored.version };
 }
 
 /**
  * Get the student context from a stored schedule
- * Returns the studentContext if available, otherwise constructs a minimal one from schedule fields
  */
-export function getStudentContext(id: string): StudentContext | null {
-  const schedule = getSchedule(id);
+export async function getStudentContext(id: string): Promise<StudentContext | null> {
+  const schedule = await getSchedule(id);
   
   if (!schedule) {
     return null;
   }
   
-  // Return the stored studentContext if available
   if (schedule.studentContext) {
     return schedule.studentContext;
   }
   
-  // Otherwise, construct a minimal context from the schedule's basic fields
   return {
     major: schedule.major,
-    // Other fields are optional and not available without explicit studentContext
   };
 }
 
 /**
  * Delete a schedule by ID
  */
-export function deleteSchedule(id: string): void {
-  const schedules = getSchedulesMap();
-  schedules.delete(id);
+export async function deleteSchedule(id: string): Promise<void> {
+  const supabase = getSupabaseClient();
+  
+  if (supabase) {
+    await supabase.from('schedules').delete().eq('id', id);
+  } else {
+    const schedules = getSchedulesMap();
+    schedules.delete(id);
+  }
 }
 
 /**
@@ -175,7 +329,6 @@ export function recalculateSemesterCredits(schedule: SchedulePlan): SchedulePlan
     return semester;
   });
   
-  // Also recalculate total credits
   const totalCredits = updatedSemesters.reduce((sum, semester) => {
     if (semester.type === 'academic' && semester.totalCredits) {
       return sum + semester.totalCredits;
@@ -190,3 +343,9 @@ export function recalculateSemesterCredits(schedule: SchedulePlan): SchedulePlan
   };
 }
 
+/**
+ * Check if Supabase storage is available
+ */
+export function isStorageConfigured(): boolean {
+  return isSupabaseConfigured();
+}

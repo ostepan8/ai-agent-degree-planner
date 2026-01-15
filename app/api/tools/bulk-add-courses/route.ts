@@ -66,7 +66,7 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const schedule = getSchedule(scheduleId);
+    const schedule = await getSchedule(scheduleId);
 
     if (!schedule) {
       return Response.json(
@@ -182,7 +182,7 @@ export async function POST(request: NextRequest) {
     // Recalculate credits
     updatedSchedule = recalculateSemesterCredits(updatedSchedule);
 
-    updateSchedule(scheduleId, updatedSchedule, 'bulk_add_courses');
+    await updateSchedule(scheduleId, updatedSchedule, 'bulk_add_courses');
 
     console.log(`✅ SUCCESS: Added ${addedCourses.length} course(s): ${addedCourses.join(', ')}`);
     if (errors.length > 0) {

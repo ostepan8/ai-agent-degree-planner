@@ -373,7 +373,7 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const schedule = getSchedule(scheduleId);
+    const schedule = await getSchedule(scheduleId);
     if (!schedule) {
       return Response.json(
         { success: false, message: "Schedule not found or expired" },
@@ -381,7 +381,7 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const studentContext = getStudentContext(scheduleId);
+    const studentContext = await getStudentContext(scheduleId);
 
     // Run all local checks
     const allIssues: ValidationIssue[] = [];

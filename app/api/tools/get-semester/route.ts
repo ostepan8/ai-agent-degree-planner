@@ -31,7 +31,7 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const schedule = getSchedule(scheduleId);
+    const schedule = await getSchedule(scheduleId);
     console.log('Schedule found:', !!schedule, 'ID:', scheduleId);
 
     if (!schedule) {

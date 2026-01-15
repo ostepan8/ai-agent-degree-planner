@@ -58,7 +58,7 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const schedule = getSchedule(scheduleId);
+    const schedule = await getSchedule(scheduleId);
 
     if (!schedule) {
       return Response.json(
@@ -137,7 +137,7 @@ export async function POST(request: NextRequest) {
     // Recalculate credits
     updatedSchedule = recalculateSemesterCredits(updatedSchedule);
 
-    updateSchedule(scheduleId, updatedSchedule, 'add_course');
+    await updateSchedule(scheduleId, updatedSchedule, 'add_course');
 
     return Response.json({
       success: true,

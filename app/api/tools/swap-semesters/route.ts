@@ -39,7 +39,7 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const schedule = getSchedule(scheduleId);
+    const schedule = await getSchedule(scheduleId);
 
     if (!schedule) {
       return Response.json(
@@ -147,7 +147,7 @@ export async function POST(request: NextRequest) {
       totalCredits,
     };
 
-    updateSchedule(scheduleId, updatedSchedule, 'swap_semesters');
+    await updateSchedule(scheduleId, updatedSchedule, 'swap_semesters');
 
     const sem1Description = newSem1.type === 'coop' 
       ? `Co-op ${newSem1.coopNumber || ''}` 

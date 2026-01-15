@@ -52,7 +52,7 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const schedule = getSchedule(scheduleId);
+    const schedule = await getSchedule(scheduleId);
 
     if (!schedule) {
       return Response.json(
@@ -136,7 +136,7 @@ export async function POST(request: NextRequest) {
     };
 
     updatedSchedule = recalculateSemesterCredits(updatedSchedule);
-    updateSchedule(scheduleId, updatedSchedule, 'fill_semester_to_credits');
+    await updateSchedule(scheduleId, updatedSchedule, 'fill_semester_to_credits');
 
     const addedStr = addedCourses.map(c => `${c.code} (${c.credits}cr)`).join(', ');
     console.log(`✅ SUCCESS: Added ${addedCourses.length} electives to ${term}: ${addedStr}`);

@@ -36,7 +36,7 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const schedule = getSchedule(scheduleId);
+    const schedule = await getSchedule(scheduleId);
     console.log('Schedule found:', !!schedule);
 
     if (!schedule) {
@@ -139,7 +139,7 @@ export async function POST(request: NextRequest) {
     updatedSchedule = recalculateSemesterCredits(updatedSchedule);
 
     // Update in store
-    updateSchedule(scheduleId, updatedSchedule, 'move_course');
+    await updateSchedule(scheduleId, updatedSchedule, 'move_course');
 
     const sourceTerm = schedule.semesters[sourceSemesterIndex].term;
 

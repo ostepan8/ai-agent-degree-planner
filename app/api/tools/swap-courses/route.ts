@@ -39,7 +39,7 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const schedule = getSchedule(scheduleId);
+    const schedule = await getSchedule(scheduleId);
     console.log('Schedule found:', !!schedule);
 
     if (!schedule) {
@@ -111,7 +111,7 @@ export async function POST(request: NextRequest) {
           semesters: updatedSemesters,
         };
 
-        updateSchedule(scheduleId, updatedSchedule, 'swap_courses');
+        await updateSchedule(scheduleId, updatedSchedule, 'swap_courses');
 
         return Response.json({
           success: true,
@@ -148,7 +148,7 @@ export async function POST(request: NextRequest) {
     // Recalculate credits
     updatedSchedule = recalculateSemesterCredits(updatedSchedule);
 
-    updateSchedule(scheduleId, updatedSchedule, 'swap_courses');
+    await updateSchedule(scheduleId, updatedSchedule, 'swap_courses');
 
     const sem1Term = schedule.semesters[course1SemIndex].term;
     const sem2Term = schedule.semesters[course2SemIndex].term;
