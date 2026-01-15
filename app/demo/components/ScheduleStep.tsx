@@ -91,7 +91,10 @@ export const ScheduleStep = React.memo(function ScheduleStep({
     
     // Save schedule to database (debounced)
     const saveScheduleToDb = useCallback((scheduleToSave: ExtendedSchedulePlan) => {
-        if (!userEmail) return
+        if (!userEmail) {
+            console.warn('saveScheduleToDb: No userEmail, skipping save')
+            return
+        }
         
         // Clear any existing timeout
         if (saveTimeoutRef.current) {
@@ -99,7 +102,9 @@ export const ScheduleStep = React.memo(function ScheduleStep({
         }
         
         // Debounce saves by 2 seconds
+        console.log('saveScheduleToDb: Scheduling save for', userEmail)
         saveTimeoutRef.current = setTimeout(() => {
+            console.log('saveScheduleToDb: Saving schedule for', userEmail)
             fetch('/api/log', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
@@ -107,6 +112,12 @@ export const ScheduleStep = React.memo(function ScheduleStep({
                     email: userEmail,
                     schedule: scheduleToSave,
                 }),
+            }).then((res) => {
+                if (res.ok) {
+                    console.log('saveScheduleToDb: Save successful')
+                } else {
+                    console.error('saveScheduleToDb: Save failed with status', res.status)
+                }
             }).catch((err) => {
                 console.error('Failed to save schedule:', err)
             })

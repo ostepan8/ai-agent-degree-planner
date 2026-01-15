@@ -394,14 +394,15 @@ export default function DemoPage() {
 
     // Modal handlers
     const handleLoadExisting = useCallback(() => {
-        if (existingScheduleData?.schedule) {
+        if (existingScheduleData?.schedule && pendingPreferences) {
+            setPreferences(pendingPreferences)  // Save the email first!
             setGeneratedSchedule(existingScheduleData.schedule)
             setCurrentStep('schedule')
         }
         setShowExistingModal(false)
         setExistingScheduleData(null)
         setPendingPreferences(null)
-    }, [existingScheduleData])
+    }, [existingScheduleData, pendingPreferences])
 
     const handleCreateNew = useCallback(async () => {
         setShowExistingModal(false)
