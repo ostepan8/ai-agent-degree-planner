@@ -2,10 +2,10 @@
 
 import React, { useState, useCallback, useMemo, useRef, useEffect } from 'react'
 import Image from 'next/image'
-import type { 
-    School, 
-    ExtendedSchedulePlan, 
-    SemesterItem, 
+import type {
+    School,
+    ExtendedSchedulePlan,
+    SemesterItem,
     AcademicYearGroup,
     DragState,
     SemesterDragState,
@@ -33,40 +33,54 @@ export const ScheduleStep = React.memo(function ScheduleStep({
     onRegenerate,
     userEmail,
 }: ScheduleStepProps) {
+    // Track if this is the initial render (to avoid saving on load)
+    const isInitialMount = useRef(true)
+
+    // Debug: Log when component mounts and when userEmail changes
+    useEffect(() => {
+        console.log('ScheduleStep: Component mounted with userEmail:', userEmail)
+        // Mark as no longer initial after first render
+        const timer = setTimeout(() => {
+            isInitialMount.current = false
+            console.log('ScheduleStep: Initial mount phase complete, saves now enabled')
+        }, 500)
+        return () => clearTimeout(timer)
+    }, [userEmail])
+
     // Local UI state - doesn't trigger parent re-renders
     const [showAddTerm, setShowAddTerm] = useState(false)
     const [newTermSeason, setNewTermSeason] = useState<'Fall' | 'Spring' | 'Summer'>('Fall')
     const [newTermYear, setNewTermYear] = useState('2025')
-    
+
     // Drag and drop state (courses)
     const [dragState, setDragState] = useState<DragState | null>(null)
     const [dropTargetSemester, setDropTargetSemester] = useState<string | null>(null)
     const dragDataRef = useRef<DragState | null>(null)
     const wasDraggingRef = useRef(false)
-    
+
     // Semester drag and drop state
     const [semesterDragState, setSemesterDragState] = useState<SemesterDragState | null>(null)
     const [semesterDropTarget, setSemesterDropTarget] = useState<string | null>(null)
     const semesterDragDataRef = useRef<SemesterDragState | null>(null)
-    
+
     // Delete confirmation state
     const [pendingDeletes, setPendingDeletes] = useState<CourseDeleteState>({})
-    
+
     // Recently added courses for animation
     const [recentlyAdded, setRecentlyAdded] = useState<Set<string>>(new Set())
-    
+
     // Add course state
     const [addingToSemester, setAddingToSemester] = useState<string | null>(null)
     const [newCourseCode, setNewCourseCode] = useState('')
     const [newCourseName, setNewCourseName] = useState('')
     const [newCourseCredits, setNewCourseCredits] = useState('4')
-    
+
     // Edit course state
     const [editingCourse, setEditingCourse] = useState<{ semester: string; index: number } | null>(null)
     const [editCourseCode, setEditCourseCode] = useState('')
     const [editCourseName, setEditCourseName] = useState('')
     const [editCourseCredits, setEditCourseCredits] = useState('4')
-    
+
     // Selected course for detail modal
     const [selectedCourse, setSelectedCourse] = useState<{
         code: string
@@ -85,26 +99,48 @@ export const ScheduleStep = React.memo(function ScheduleStep({
     const [expandedThoughts, setExpandedThoughts] = useState<Set<number>>(new Set())
     const [currentThought, setCurrentThought] = useState<string>('')
     const [webSearchEnabled, setWebSearchEnabled] = useState(false)
-    
+
     // Debounced save ref
     const saveTimeoutRef = useRef<NodeJS.Timeout | null>(null)
-    
+
     // Save schedule to database (debounced)
     const saveScheduleToDb = useCallback((scheduleToSave: ExtendedSchedulePlan) => {
+        // Log call stack to debug what's triggering saves
+        console.log('saveScheduleToDb: Called from:', new Error().stack?.split('\n')[2])
+
         if (!userEmail) {
             console.warn('saveScheduleToDb: No userEmail, skipping save')
             return
         }
-        
+
+        // Skip saves during initial mount phase
+        if (isInitialMount.current) {
+            console.log('saveScheduleToDb: Skipping save during initial mount')
+            return
+        }
+
+        // Count total courses for logging
+        const totalCourses = (scheduleToSave.semesters || []).reduce((sum, sem) => {
+            if (sem.type === 'academic' && sem.courses) {
+                return sum + sem.courses.length
+            }
+            return sum
+        }, 0)
+
         // Clear any existing timeout
         if (saveTimeoutRef.current) {
             clearTimeout(saveTimeoutRef.current)
         }
-        
-        // Debounce saves by 2 seconds
+
+        // Debounce saves by 1 second (reduced from 2 for faster feedback)
         console.log('saveScheduleToDb: Scheduling save for', userEmail)
+        console.log('saveScheduleToDb: Schedule has',
+            scheduleToSave.semesters?.length, 'semesters,',
+            totalCourses, 'courses,',
+            scheduleToSave.totalCredits, 'credits')
+
         saveTimeoutRef.current = setTimeout(() => {
-            console.log('saveScheduleToDb: Saving schedule for', userEmail)
+            console.log('saveScheduleToDb: Executing save NOW for', userEmail)
             fetch('/api/log', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
@@ -112,18 +148,19 @@ export const ScheduleStep = React.memo(function ScheduleStep({
                     email: userEmail,
                     schedule: scheduleToSave,
                 }),
-            }).then((res) => {
-                if (res.ok) {
-                    console.log('saveScheduleToDb: Save successful')
+            }).then(async (res) => {
+                const data = await res.json()
+                if (res.ok && data.success) {
+                    console.log('saveScheduleToDb: ✓ Save successful -', data.logged)
                 } else {
-                    console.error('saveScheduleToDb: Save failed with status', res.status)
+                    console.error('saveScheduleToDb: ✗ Save failed -', data.error || res.status)
                 }
             }).catch((err) => {
-                console.error('Failed to save schedule:', err)
+                console.error('saveScheduleToDb: Network error:', err)
             })
-        }, 2000)
+        }, 1000)  // Reduced to 1 second for faster persistence
     }, [userEmail])
-    
+
     // Cleanup timeout on unmount
     useEffect(() => {
         return () => {
@@ -233,7 +270,7 @@ export const ScheduleStep = React.memo(function ScheduleStep({
     ) => {
         // Stop propagation to prevent semester drag from interfering
         e.stopPropagation()
-        
+
         e.dataTransfer.effectAllowed = 'move'
         e.dataTransfer.setData('text/course', course.code)
 
@@ -256,7 +293,7 @@ export const ScheduleStep = React.memo(function ScheduleStep({
         `
         document.body.appendChild(dragImage)
         e.dataTransfer.setDragImage(dragImage, dragImage.offsetWidth / 2, dragImage.offsetHeight / 2)
-        
+
         // Clean up after a short delay
         setTimeout(() => {
             document.body.removeChild(dragImage)
@@ -429,7 +466,7 @@ export const ScheduleStep = React.memo(function ScheduleStep({
         `
         document.body.appendChild(dragImage)
         e.dataTransfer.setDragImage(dragImage, dragImage.offsetWidth / 2, dragImage.offsetHeight / 2)
-        
+
         // Clean up after a short delay
         setTimeout(() => {
             document.body.removeChild(dragImage)
@@ -528,14 +565,14 @@ export const ScheduleStep = React.memo(function ScheduleStep({
 
         // Cast semesters array once for cleaner type handling
         const semesters = updatedSchedule.semesters as SemesterItem[]
-        
+
         if (!sem1IsCoop && !sem2IsCoop) {
             // Swap academic semester contents (keep terms, swap courses)
             const sem1Courses = sem1.courses || []
             const sem2Courses = sem2.courses || []
             const sem1Credits = sem1.totalCredits || 0
             const sem2Credits = sem2.totalCredits || 0
-            
+
             semesters[sem1Index] = {
                 term: sem1.term, type: 'academic', courses: sem2Courses, totalCredits: sem2Credits, status: sem1.status
             }
@@ -794,32 +831,32 @@ export const ScheduleStep = React.memo(function ScheduleStep({
     // PDF save handler
     const handleSavePDF = useCallback(async () => {
         if (!schedule) return
-        
+
         // Dynamic import for PDF generation
         const { default: jsPDF } = await import('jspdf')
-        
+
         const doc = new jsPDF()
-        
+
         // Add title
         doc.setFontSize(20)
         doc.text(`${schedule.degree} in ${schedule.major || major}`, 20, 20)
-        
+
         doc.setFontSize(12)
         doc.text(`${selectedSchool?.name}`, 20, 30)
         doc.text(`${schedule.startTerm} - ${schedule.graduationTerm}`, 20, 40)
-        
+
         let y = 60
-        
+
         yearGroups.forEach((yearGroup) => {
             if (y > 250) {
                 doc.addPage()
                 y = 20
             }
-            
+
             doc.setFontSize(14)
             doc.text(`${yearGroup.year} (${yearGroup.academicYear})`, 20, y)
             y += 10
-            
+
             yearGroup.semesters.forEach((sem) => {
                 if (isCoopSemester(sem)) {
                     doc.setFontSize(10)
@@ -829,7 +866,7 @@ export const ScheduleStep = React.memo(function ScheduleStep({
                     doc.setFontSize(10)
                     doc.text(`${sem.term} (${sem.totalCredits} credits)`, 25, y)
                     y += 6
-                    
+
                     sem.courses.forEach((course) => {
                         doc.setFontSize(9)
                         doc.text(`  ${course.code} - ${course.name} (${course.credits} cr)`, 30, y)
@@ -840,7 +877,7 @@ export const ScheduleStep = React.memo(function ScheduleStep({
             })
             y += 6
         })
-        
+
         doc.save(`${schedule.major || major}_schedule.pdf`)
     }, [schedule, selectedSchool, major, yearGroups])
 
@@ -951,7 +988,7 @@ export const ScheduleStep = React.memo(function ScheduleStep({
                                         // Save to database (debounced)
                                         saveScheduleToDb(data.schedule as ExtendedSchedulePlan)
                                     }
-                                    
+
                                     // Add assistant message to chat
                                     const assistantMessageId = chatMessageIdRef.current++
                                     setChatMessages(prev => [...prev, {
@@ -992,7 +1029,7 @@ export const ScheduleStep = React.memo(function ScheduleStep({
 
     // The component is very large, so we return the JSX in a simpler format
     // In a real implementation, you might want to split this into sub-components
-    
+
     return (
         <div className={styles.splitLayout}>
             {/* Left Panel - Schedule */}
@@ -1512,8 +1549,8 @@ export const ScheduleStep = React.memo(function ScheduleStep({
                     ) : (
                         <>
                             {chatMessages.map((msg) => (
-                                <div 
-                                    key={msg.id} 
+                                <div
+                                    key={msg.id}
                                     className={`${styles.chatMessage} ${msg.role === 'user' ? styles.chatMessageUser : styles.chatMessageAssistant}`}
                                 >
                                     {msg.role === 'assistant' && (
@@ -1556,7 +1593,7 @@ export const ScheduleStep = React.memo(function ScheduleStep({
                             ))}
                         </>
                     )}
-                    
+
                     {/* Show current thinking state */}
                     {isProcessingCommand && (
                         <div className={`${styles.chatMessage} ${styles.chatMessageAssistant}`}>
@@ -1580,7 +1617,7 @@ export const ScheduleStep = React.memo(function ScheduleStep({
                             </div>
                         </div>
                     )}
-                    
+
                     <div ref={chatMessagesEndRef} />
                 </div>
                 <div className={styles.chatInputArea}>
