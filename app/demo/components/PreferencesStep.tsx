@@ -48,9 +48,17 @@ export const PreferencesStep = React.memo(function PreferencesStep({
         setPreferences(p => ({ ...p, email: e.target.value }))
     }, [])
 
+    // Email validation
+    const isEmailValid = useMemo(() => {
+        const email = preferences.email?.trim() || ''
+        // Basic email validation
+        return email.length > 0 && /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)
+    }, [preferences.email])
+
     const handleGenerate = useCallback(() => {
+        if (!isEmailValid) return
         onGenerate(preferences)
-    }, [preferences, onGenerate])
+    }, [preferences, onGenerate, isEmailValid])
 
     return (
         <div className={styles.centerSection}>
@@ -97,14 +105,28 @@ export const PreferencesStep = React.memo(function PreferencesStep({
 
                 <div className={styles.preferencesForm}>
                     <div className={styles.prefGroup}>
-                        <label className={styles.prefLabel}>Email Address</label>
+                        <label className={styles.prefLabel}>
+                            Email Address <span style={{ color: '#ef4444' }}>*</span>
+                        </label>
                         <input
                             type="email"
                             className={styles.prefSelect}
-                            placeholder="your.email@example.com"
+                            placeholder="your.email@example.com (required)"
                             value={preferences.email || ''}
                             onChange={handleEmailChange}
+                            style={{
+                                borderColor: preferences.email && !isEmailValid ? '#ef4444' : undefined,
+                            }}
+                            required
                         />
+                        {preferences.email && !isEmailValid && (
+                            <div style={{ color: '#ef4444', fontSize: '12px', marginTop: '4px' }}>
+                                Please enter a valid email address
+                            </div>
+                        )}
+                        <div style={{ color: '#6b7280', fontSize: '12px', marginTop: '4px' }}>
+                            Your schedule will be saved to this email so you can return and edit it later.
+                        </div>
                     </div>
 
                     <div className={styles.prefGroup}>
@@ -176,7 +198,16 @@ export const PreferencesStep = React.memo(function PreferencesStep({
                     <button className={styles.secondaryButton} onClick={onBack}>
                         ← Back
                     </button>
-                    <button className={styles.primaryButton} onClick={handleGenerate}>
+                    <button 
+                        className={styles.primaryButton} 
+                        onClick={handleGenerate}
+                        disabled={!isEmailValid}
+                        style={{
+                            opacity: isEmailValid ? 1 : 0.5,
+                            cursor: isEmailValid ? 'pointer' : 'not-allowed',
+                        }}
+                        title={!isEmailValid ? 'Please enter a valid email address' : undefined}
+                    >
                         Generate My Plan
                         <span className={styles.buttonArrow}>→</span>
                     </button>

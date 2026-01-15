@@ -22,6 +22,7 @@ interface ScheduleStepProps {
     major: string
     onScheduleChange: (schedule: ExtendedSchedulePlan) => void
     onRegenerate: () => void
+    userEmail?: string
 }
 
 export const ScheduleStep = React.memo(function ScheduleStep({
@@ -30,6 +31,7 @@ export const ScheduleStep = React.memo(function ScheduleStep({
     major,
     onScheduleChange,
     onRegenerate,
+    userEmail,
 }: ScheduleStepProps) {
     // Local UI state - doesn't trigger parent re-renders
     const [showAddTerm, setShowAddTerm] = useState(false)
@@ -83,6 +85,42 @@ export const ScheduleStep = React.memo(function ScheduleStep({
     const [expandedThoughts, setExpandedThoughts] = useState<Set<number>>(new Set())
     const [currentThought, setCurrentThought] = useState<string>('')
     const [webSearchEnabled, setWebSearchEnabled] = useState(false)
+    
+    // Debounced save ref
+    const saveTimeoutRef = useRef<NodeJS.Timeout | null>(null)
+    
+    // Save schedule to database (debounced)
+    const saveScheduleToDb = useCallback((scheduleToSave: ExtendedSchedulePlan) => {
+        if (!userEmail) return
+        
+        // Clear any existing timeout
+        if (saveTimeoutRef.current) {
+            clearTimeout(saveTimeoutRef.current)
+        }
+        
+        // Debounce saves by 2 seconds
+        saveTimeoutRef.current = setTimeout(() => {
+            fetch('/api/log', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    email: userEmail,
+                    schedule: scheduleToSave,
+                }),
+            }).catch((err) => {
+                console.error('Failed to save schedule:', err)
+            })
+        }, 2000)
+    }, [userEmail])
+    
+    // Cleanup timeout on unmount
+    useEffect(() => {
+        return () => {
+            if (saveTimeoutRef.current) {
+                clearTimeout(saveTimeoutRef.current)
+            }
+        }
+    }, [])
     const chatMessagesEndRef = useRef<HTMLDivElement>(null)
     const abortControllerRef = useRef<AbortController | null>(null)
     const commandInputRef = useRef<HTMLInputElement>(null)
@@ -343,9 +381,10 @@ export const ScheduleStep = React.memo(function ScheduleStep({
         }, 600)
 
         onScheduleChange(updatedSchedule as ExtendedSchedulePlan)
+        saveScheduleToDb(updatedSchedule as ExtendedSchedulePlan)
         setDragState(null)
         dragDataRef.current = null
-    }, [dragState, schedule, onScheduleChange])
+    }, [dragState, schedule, onScheduleChange, saveScheduleToDb])
 
     // Semester drag handlers
     const handleSemesterDragStart = useCallback((e: React.DragEvent, semester: SemesterItem) => {
@@ -526,9 +565,10 @@ export const ScheduleStep = React.memo(function ScheduleStep({
         }, 0)
 
         onScheduleChange(updatedSchedule as ExtendedSchedulePlan)
+        saveScheduleToDb(updatedSchedule as ExtendedSchedulePlan)
         setSemesterDragState(null)
         semesterDragDataRef.current = null
-    }, [semesterDragState, schedule, onScheduleChange])
+    }, [semesterDragState, schedule, onScheduleChange, saveScheduleToDb])
 
     // Delete handlers - use index for unique identification (handles duplicate course codes like "ELECTIVE")
     const handleDeleteClick = useCallback((semesterTerm: string, courseIndex: number) => {
@@ -553,6 +593,7 @@ export const ScheduleStep = React.memo(function ScheduleStep({
                 }, 0)
 
                 onScheduleChange(updatedSchedule as ExtendedSchedulePlan)
+                saveScheduleToDb(updatedSchedule as ExtendedSchedulePlan)
 
                 const next = { ...prev }
                 delete next[key]
@@ -569,7 +610,7 @@ export const ScheduleStep = React.memo(function ScheduleStep({
                 return { ...prev, [key]: true }
             }
         })
-    }, [schedule, onScheduleChange])
+    }, [schedule, onScheduleChange, saveScheduleToDb])
 
     const cancelDelete = useCallback((semesterTerm: string, courseIndex: number) => {
         const key = `${semesterTerm}-${courseIndex}`
@@ -605,6 +646,7 @@ export const ScheduleStep = React.memo(function ScheduleStep({
         }, 0)
 
         onScheduleChange(updatedSchedule as ExtendedSchedulePlan)
+        saveScheduleToDb(updatedSchedule as ExtendedSchedulePlan)
 
         const courseKey = `${semesterTerm}-${newCourse.code}`
         setRecentlyAdded(prev => new Set(prev).add(courseKey))
@@ -620,7 +662,7 @@ export const ScheduleStep = React.memo(function ScheduleStep({
         setNewCourseName('')
         setNewCourseCredits('4')
         setAddingToSemester(null)
-    }, [schedule, newCourseCode, newCourseName, newCourseCredits, onScheduleChange])
+    }, [schedule, newCourseCode, newCourseName, newCourseCredits, onScheduleChange, saveScheduleToDb])
 
     const cancelAddCourse = useCallback(() => {
         setAddingToSemester(null)
@@ -666,8 +708,9 @@ export const ScheduleStep = React.memo(function ScheduleStep({
         }, 0)
 
         onScheduleChange(updatedSchedule as ExtendedSchedulePlan)
+        saveScheduleToDb(updatedSchedule as ExtendedSchedulePlan)
         cancelEditCourse()
-    }, [schedule, editingCourse, editCourseCode, editCourseName, editCourseCredits, onScheduleChange, cancelEditCourse])
+    }, [schedule, editingCourse, editCourseCode, editCourseName, editCourseCredits, onScheduleChange, cancelEditCourse, saveScheduleToDb])
 
     // Delete term handler
     const handleDeleteTerm = useCallback((termToDelete: string) => {
@@ -689,7 +732,8 @@ export const ScheduleStep = React.memo(function ScheduleStep({
         }, 0)
 
         onScheduleChange(updatedSchedule as ExtendedSchedulePlan)
-    }, [schedule, onScheduleChange])
+        saveScheduleToDb(updatedSchedule as ExtendedSchedulePlan)
+    }, [schedule, onScheduleChange, saveScheduleToDb])
 
     // Add term handler
     const handleAddTerm = useCallback(() => {
@@ -730,10 +774,11 @@ export const ScheduleStep = React.memo(function ScheduleStep({
         })
 
         onScheduleChange(updatedSchedule as ExtendedSchedulePlan)
+        saveScheduleToDb(updatedSchedule as ExtendedSchedulePlan)
         setShowAddTerm(false)
         setNewTermSeason('Fall')
         setNewTermYear('2025')
-    }, [schedule, newTermSeason, newTermYear, onScheduleChange])
+    }, [schedule, newTermSeason, newTermYear, onScheduleChange, saveScheduleToDb])
 
     // PDF save handler
     const handleSavePDF = useCallback(async () => {
@@ -883,6 +928,8 @@ export const ScheduleStep = React.memo(function ScheduleStep({
                                     // Update schedule when tool makes changes
                                     if (data.schedule) {
                                         onScheduleChange(data.schedule as ExtendedSchedulePlan)
+                                        // Save to database (debounced)
+                                        saveScheduleToDb(data.schedule as ExtendedSchedulePlan)
                                     }
                                     break
 
@@ -890,6 +937,8 @@ export const ScheduleStep = React.memo(function ScheduleStep({
                                     // Update schedule with final result
                                     if (data.schedule) {
                                         onScheduleChange(data.schedule as ExtendedSchedulePlan)
+                                        // Save to database (debounced)
+                                        saveScheduleToDb(data.schedule as ExtendedSchedulePlan)
                                     }
                                     
                                     // Add assistant message to chat
@@ -928,7 +977,7 @@ export const ScheduleStep = React.memo(function ScheduleStep({
             setCurrentThought('')
             abortControllerRef.current = null
         }
-    }, [commandInput, isProcessingCommand, schedule, webSearchEnabled, onScheduleChange])
+    }, [commandInput, isProcessingCommand, schedule, webSearchEnabled, onScheduleChange, saveScheduleToDb])
 
     // The component is very large, so we return the JSX in a simpler format
     // In a real implementation, you might want to split this into sub-components

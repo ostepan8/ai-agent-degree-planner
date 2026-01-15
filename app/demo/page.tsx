@@ -12,6 +12,7 @@ import {
     PreferencesStep,
     GeneratingStep,
     ScheduleStep,
+    ExistingScheduleModal,
     type MajorData,
     type TranscriptData,
     type School,
@@ -47,6 +48,16 @@ export default function DemoPage() {
     const [thoughts, setThoughts] = useState<AgentThought[]>([])
     const [generationError, setGenerationError] = useState<string | null>(null)
     const [generationPhase, setGenerationPhase] = useState<GenerationPhase>('requirements')
+    
+    // Existing schedule modal state
+    const [showExistingModal, setShowExistingModal] = useState(false)
+    const [existingScheduleData, setExistingScheduleData] = useState<{
+        schedule: ExtendedSchedulePlan
+        school?: string
+        major?: string
+        createdAt?: string
+    } | null>(null)
+    const [pendingPreferences, setPendingPreferences] = useState<Preferences | null>(null)
     
     // Two-stage progress tracking
     const [currentStage, setCurrentStage] = useState<1 | 2>(1)
@@ -205,11 +216,10 @@ export default function DemoPage() {
         })
     }, [])
 
-    // Generate schedule handler
-    const handleGenerateSchedule = useCallback(async (prefs: Preferences) => {
+    // Proceed with actual schedule generation
+    const proceedWithGeneration = useCallback(async (prefs: Preferences) => {
         if (!selectedSchool || !majorData) return
 
-        setPreferences(prefs)
         setCurrentStep('generating')
         setThoughts([])
         setGenerationError(null)
@@ -222,22 +232,6 @@ export default function DemoPage() {
         setElapsedTime(0)
         setStage1CompletedTime(null)
         setEstimatedMinutes(1.5)
-
-        // Fire-and-forget: Log user data for tracking (don't await)
-        fetch('/api/log', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-                email: prefs.email,
-                school: selectedSchool,
-                major: majorData.major,
-                preferences: prefs,
-                isFreshman,
-                completedCoursesCount: extractedCourses.length,
-            }),
-        }).catch(() => {
-            // Silently ignore logging errors
-        })
 
         try {
             const response = await fetch('/api/schedule/stream', {
@@ -321,6 +315,23 @@ export default function DemoPage() {
                                     if (data.schedule) {
                                         setGeneratedSchedule(data.schedule)
                                         setCurrentStep('schedule')
+                                        
+                                        // Save schedule to database
+                                        fetch('/api/log', {
+                                            method: 'POST',
+                                            headers: { 'Content-Type': 'application/json' },
+                                            body: JSON.stringify({
+                                                email: prefs.email,
+                                                school: selectedSchool,
+                                                major: majorData?.major,
+                                                preferences: prefs,
+                                                isFreshman,
+                                                completedCoursesCount: extractedCourses.length,
+                                                schedule: data.schedule,
+                                            }),
+                                        }).catch((err) => {
+                                            console.error('Failed to save schedule:', err)
+                                        })
                                     } else {
                                         throw new Error('No schedule data received')
                                     }
@@ -349,10 +360,68 @@ export default function DemoPage() {
         }
     }, [selectedSchool, majorData, extractedCourses, isFreshman, elapsedTime, addThought, completeCurrentThought])
 
+    // Generate schedule handler - checks for existing schedule first
+    const handleGenerateSchedule = useCallback(async (prefs: Preferences) => {
+        if (!selectedSchool || !majorData) return
+
+        setPreferences(prefs)
+        setPendingPreferences(prefs)
+
+        // Check if user has an existing schedule
+        try {
+            const response = await fetch(`/api/user/schedule?email=${encodeURIComponent(prefs.email || '')}`)
+            const data = await response.json()
+
+            if (data.exists && data.schedule) {
+                // User has an existing schedule - show modal
+                setExistingScheduleData({
+                    schedule: data.schedule,
+                    school: data.school,
+                    major: data.major,
+                    createdAt: data.created_at,
+                })
+                setShowExistingModal(true)
+                return
+            }
+        } catch (error) {
+            console.error('Error checking for existing schedule:', error)
+            // Continue with generation if check fails
+        }
+
+        // No existing schedule - proceed with generation
+        await proceedWithGeneration(prefs)
+    }, [selectedSchool, majorData, proceedWithGeneration])
+
+    // Modal handlers
+    const handleLoadExisting = useCallback(() => {
+        if (existingScheduleData?.schedule) {
+            setGeneratedSchedule(existingScheduleData.schedule)
+            setCurrentStep('schedule')
+        }
+        setShowExistingModal(false)
+        setExistingScheduleData(null)
+        setPendingPreferences(null)
+    }, [existingScheduleData])
+
+    const handleCreateNew = useCallback(async () => {
+        setShowExistingModal(false)
+        setExistingScheduleData(null)
+        if (pendingPreferences) {
+            await proceedWithGeneration(pendingPreferences)
+        }
+        setPendingPreferences(null)
+    }, [pendingPreferences, proceedWithGeneration])
+
+    const handleCancelModal = useCallback(() => {
+        setShowExistingModal(false)
+        setExistingScheduleData(null)
+        setPendingPreferences(null)
+    }, [])
+
     // Retry generation handler
     const handleRetryGeneration = useCallback(() => {
-        handleGenerateSchedule(preferences)
-    }, [handleGenerateSchedule, preferences])
+        proceedWithGeneration(preferences)
+    }, [proceedWithGeneration, preferences])
 
     // Schedule change handler
     const handleScheduleChange = useCallback((schedule: ExtendedSchedulePlan) => {
@@ -437,9 +506,24 @@ export default function DemoPage() {
                         major={majorData.major}
                         onScheduleChange={handleScheduleChange}
                         onRegenerate={handleRetryGeneration}
+                        userEmail={preferences.email}
                     />
                 )}
             </main>
+
+            {/* Existing Schedule Modal */}
+            {showExistingModal && existingScheduleData && pendingPreferences && (
+                <ExistingScheduleModal
+                    email={pendingPreferences.email || ''}
+                    schedule={existingScheduleData.schedule}
+                    school={existingScheduleData.school}
+                    major={existingScheduleData.major}
+                    createdAt={existingScheduleData.createdAt}
+                    onLoadExisting={handleLoadExisting}
+                    onCreateNew={handleCreateNew}
+                    onCancel={handleCancelModal}
+                />
+            )}
         </div>
     )
 }
