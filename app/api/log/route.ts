@@ -4,6 +4,8 @@ import type { SchedulePlan } from "@/lib/schemas";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
+export const fetchCache = "force-no-store";
+export const revalidate = 0;
 
 interface LogRequestBody {
   email: string;
@@ -274,12 +276,26 @@ export async function POST(request: NextRequest) {
       schedulePreview.substring(0, 50)
     );
 
-    return NextResponse.json({ success: true, logged: "supabase" });
+    return NextResponse.json(
+      { success: true, logged: "supabase" },
+      {
+        headers: {
+          "Cache-Control": "no-store, no-cache, must-revalidate, max-age=0",
+          "Pragma": "no-cache",
+        },
+      }
+    );
   } catch (error) {
     console.error("Failed to log user data:", error);
     return NextResponse.json(
       { success: false, error: "Logging failed" },
-      { status: 500 }
+      {
+        status: 500,
+        headers: {
+          "Cache-Control": "no-store, no-cache, must-revalidate, max-age=0",
+          "Pragma": "no-cache",
+        },
+      }
     );
   }
 }
