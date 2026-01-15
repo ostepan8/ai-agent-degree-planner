@@ -20,13 +20,8 @@ interface SubconsciousToolRequest {
 }
 
 export async function POST(request: NextRequest) {
-  console.log('\n========================================');
-  console.log('=== TOOL: swap-semesters called ===');
-  console.log('========================================');
-
   try {
     const body = (await request.json()) as SubconsciousToolRequest;
-    console.log('Request body:', JSON.stringify(body, null, 2));
 
     const scheduleId = body.parameters?.scheduleId || body.scheduleId;
     const semester1 = body.parameters?.semester1 || body.semester1;
@@ -72,8 +67,6 @@ export async function POST(request: NextRequest) {
 
     const sem1 = schedule.semesters[sem1Index];
     const sem2 = schedule.semesters[sem2Index];
-
-    console.log(`Swapping: ${sem1.term} (${sem1.type}) <-> ${sem2.term} (${sem2.type})`);
 
     // Create swapped semesters - swap types and content but keep the term names
     const newSem1: Semester = sem1.type === 'coop' && sem2.type === 'academic'
@@ -156,10 +149,6 @@ export async function POST(request: NextRequest) {
       ? `Co-op ${newSem2.coopNumber || ''}`
       : `Academic (${newSem2.totalCredits} credits, ${newSem2.courses?.length || 0} courses)`;
 
-    console.log(`✅ SUCCESS: Swapped ${semester1} and ${semester2}`);
-    console.log(`  ${semester1} is now: ${sem1Description}`);
-    console.log(`  ${semester2} is now: ${sem2Description}`);
-
     return Response.json({
       success: true,
       message: `Swapped ${semester1} (now ${newSem1.type}) with ${semester2} (now ${newSem2.type})`,
@@ -170,7 +159,7 @@ export async function POST(request: NextRequest) {
       schedule: updatedSchedule,
     });
   } catch (error) {
-    console.error('❌ swap-semesters error:', error);
+    console.error('swap-semesters error:', error);
     return Response.json(
       { success: false, message: error instanceof Error ? error.message : 'Unknown error' },
       { status: 500 }

@@ -25,13 +25,8 @@ interface LightSemester {
 }
 
 export async function POST(request: NextRequest) {
-  console.log('\n========================================');
-  console.log('=== TOOL: find-light-semesters called ===');
-  console.log('========================================');
-  
   try {
     const body = (await request.json()) as SubconsciousToolRequest;
-    console.log('Request body:', JSON.stringify(body, null, 2));
     
     const scheduleId = body.parameters?.scheduleId || body.scheduleId;
     const minCredits = body.parameters?.minCredits || body.minCredits || 16; // Default to 16 credits
@@ -83,8 +78,6 @@ export async function POST(request: NextRequest) {
       totalCreditsNeeded: lightSemesters.reduce((sum, s) => sum + s.creditsNeeded, 0),
       semesters: lightSemesters,
     };
-
-    console.log(`Found ${lightSemesters.length} semesters under ${minCredits} credits`);
 
     return Response.json({
       success: true,

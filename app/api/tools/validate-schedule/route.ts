@@ -356,13 +356,8 @@ function buildRequiredSearches(
 // ============================================
 
 export async function POST(request: NextRequest) {
-  console.log("\n========================================");
-  console.log("=== TOOL: validate-schedule called ===");
-  console.log("========================================");
-
   try {
     const body = (await request.json()) as SubconsciousToolRequest;
-    console.log("Request body:", JSON.stringify(body, null, 2));
 
     const scheduleId = body.parameters?.scheduleId || body.scheduleId;
 
@@ -388,31 +383,26 @@ export async function POST(request: NextRequest) {
     const checksPerformed: string[] = [];
 
     // 1. Credit check
-    console.log("Checking credits...");
     checksPerformed.push("Credit requirements");
     const creditResult = checkCredits(schedule);
     allIssues.push(...creditResult.issues);
 
     // 2. Placeholder detection
-    console.log("Detecting placeholders...");
     checksPerformed.push("Placeholder detection");
     const placeholderResult = detectPlaceholders(schedule);
     allIssues.push(...placeholderResult.issues);
 
     // 3. Duplicate detection
-    console.log("Detecting duplicates...");
     checksPerformed.push("Duplicate detection");
     const duplicateResult = detectDuplicates(schedule);
     allIssues.push(...duplicateResult.issues);
 
     // 4. Empty semester detection
-    console.log("Detecting empty semesters...");
     checksPerformed.push("Empty semester detection");
     const emptyResult = detectEmptySemesters(schedule);
     allIssues.push(...emptyResult.issues);
 
     // 5. Code format validation
-    console.log("Validating course codes...");
     checksPerformed.push("Course code format");
     const formatResult = validateCodeFormats(schedule);
     allIssues.push(...formatResult.issues);
@@ -480,8 +470,6 @@ Use ParallelSearch for each item in requiredSearches to verify:
 Then take action to fix any gaps found.
 `.trim(),
     };
-
-    console.log("Validation result:", JSON.stringify(result, null, 2));
 
     return Response.json({
       success: true,

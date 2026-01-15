@@ -27,10 +27,8 @@ interface SubconsciousToolRequest {
 }
 
 export async function POST(request: NextRequest) {
-  console.log('\n=== TOOL: add-course called ===');
   try {
     const body = (await request.json()) as SubconsciousToolRequest;
-    console.log('Body:', JSON.stringify(body));
     
     // Extract from either Subconscious format or direct format
     const scheduleId = body.parameters?.scheduleId || body.scheduleId;

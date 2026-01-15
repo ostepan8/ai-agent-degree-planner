@@ -297,13 +297,6 @@ export async function POST(request: NextRequest) {
     let transcriptData: TranscriptData | null = null;
     if (!isFreshman && completedCourses && completedCourses.length > 0) {
       transcriptData = groupCoursesBySemester(completedCourses);
-      console.log("\n=== TRANSCRIPT DATA ===");
-      console.log(`  Completed semesters: ${transcriptData.completedSemesters.length}`);
-      console.log(`  Transfer credits: ${transcriptData.transferCredits.length} courses (${transcriptData.totalTransferCredits} credits)`);
-      console.log(`  Total completed credits: ${transcriptData.totalCompletedCredits + transcriptData.totalTransferCredits}`);
-      console.log(`  Completed co-ops: ${transcriptData.completedCoops}`);
-      console.log(`  Last completed term: ${transcriptData.lastCompletedTerm}`);
-      console.log(`  Next semester: ${transcriptData.nextSemester}`);
     }
 
     // Build completed courses text for non-freshmen (legacy format for backward compatibility)
@@ -372,7 +365,6 @@ export async function POST(request: NextRequest) {
           
           if (hasTranscriptDataForStage1 && transcriptData) {
             // Use lighter requirements check that focuses on what's remaining
-            console.log("\n=== STAGE 1: COMPLETION REQUIREMENTS CHECK ===");
             requirementsPrompt = buildRequirementsCheckPrompt({
               school,
               major,
@@ -386,7 +378,6 @@ export async function POST(request: NextRequest) {
             });
           } else {
             // Use full requirements extraction for freshmen
-            console.log("\n=== STAGE 1: FULL REQUIREMENTS EXTRACTION ===");
             requirementsPrompt = buildRequirementsPrompt({
               school,
               major,
@@ -394,8 +385,6 @@ export async function POST(request: NextRequest) {
               minor: undefined,
             });
           }
-
-          console.log("\n=== STAGE 1: REQUIREMENTS EXTRACTION ===");
 
           let extractedRequirements: ExtractedRequirements | null = null;
           let stage1Content = "";
@@ -449,7 +438,6 @@ export async function POST(request: NextRequest) {
                   )
                 );
               } else if (event.type === "error") {
-                console.log("Stage 1 error:", event.message);
                 // Don't fail completely - continue without requirements
                 break;
               }
@@ -469,14 +457,10 @@ export async function POST(request: NextRequest) {
                   if (answerObj.coreCourses || answerObj.totalCreditsRequired) {
                     extractedRequirements =
                       answerObj as unknown as ExtractedRequirements;
-                    console.log(
-                      "Extracted requirements from API:",
-                      JSON.stringify(extractedRequirements).substring(0, 300)
-                    );
                   }
                 }
-              } catch (e) {
-                console.log("Failed to get requirements from API:", e);
+              } catch {
+                // Failed to get requirements from API
               }
             }
 
@@ -484,12 +468,8 @@ export async function POST(request: NextRequest) {
             if (!extractedRequirements) {
               extractedRequirements =
                 extractRequirementsFromContent(stage1Content);
-              if (extractedRequirements) {
-                console.log("Extracted requirements from content");
-              }
             }
-          } catch (stage1Error) {
-            console.log("Stage 1 failed:", stage1Error);
+          } catch {
             controller.enqueue(
               encoder.encode(
                 `data: ${JSON.stringify({
@@ -503,13 +483,6 @@ export async function POST(request: NextRequest) {
           }
 
           if (extractedRequirements) {
-            console.log(
-              `Requirements extracted: ${
-                extractedRequirements.coreCourses?.length || 0
-              } core courses, ${
-                extractedRequirements.totalCreditsRequired || "unknown"
-              } total credits`
-            );
             controller.enqueue(
               encoder.encode(
                 `data: ${JSON.stringify({
@@ -524,7 +497,6 @@ export async function POST(request: NextRequest) {
               )
             );
           } else {
-            console.log("No requirements extracted, proceeding without them");
             controller.enqueue(
               encoder.encode(
                 `data: ${JSON.stringify({
@@ -577,11 +549,6 @@ export async function POST(request: NextRequest) {
           if (isCompletionMode && transcriptData) {
             // COMPLETION PIPELINE: Student has completed courses
             // Use dedicated completion prompt that treats past courses as immutable
-            console.log("\n=== USING COMPLETION PIPELINE ===");
-            const completedCredits = transcriptData.totalCompletedCredits + transcriptData.totalTransferCredits;
-            console.log(`  Completed credits: ${completedCredits}`);
-            console.log(`  Completed semesters: ${transcriptData.completedSemesters.length}`);
-            
             instructions = buildCompletionInstructions({
               school,
               major,
@@ -596,8 +563,6 @@ export async function POST(request: NextRequest) {
             });
           } else {
             // FULL GENERATION PIPELINE: Freshman or no transcript
-            console.log("\n=== USING FULL GENERATION PIPELINE ===");
-            
             instructions = buildScheduleInstructions({
               school,
               major,
@@ -614,8 +579,6 @@ export async function POST(request: NextRequest) {
               extractedRequirements: extractedRequirements || undefined,
             });
           }
-
-          console.log("\n=== STAGE 2: SCHEDULE GENERATION ===");
 
           const agentStream = client.stream({
             engine: DEFAULT_ENGINE,
@@ -691,13 +654,6 @@ export async function POST(request: NextRequest) {
           }
 
           // Stream has ended, now get the final result
-          console.log(
-            "Stage 2 stream completed. RunId:",
-            lastRunId,
-            "Stream completed flag:",
-            streamCompleted
-          );
-
           // Send update that we're now in post-processing phase
           controller.enqueue(
             encoder.encode(
@@ -720,14 +676,6 @@ export async function POST(request: NextRequest) {
             for (let attempt = 0; attempt < 3; attempt++) {
               try {
                 const finalRun = await client.get(lastRunId);
-                console.log(
-                  `Attempt ${attempt + 1}: Final run status:`,
-                  finalRun.status
-                );
-                console.log(
-                  `Attempt ${attempt + 1}: Final run result exists:`,
-                  !!finalRun.result
-                );
 
                 if (finalRun.result?.answer) {
                   try {
@@ -737,13 +685,8 @@ export async function POST(request: NextRequest) {
                     } else {
                       schedule = finalRun.result.answer;
                     }
-                    console.log(
-                      "Parsed schedule from API:",
-                      JSON.stringify(schedule).substring(0, 200)
-                    );
                     break; // Success, exit retry loop
-                  } catch (parseError) {
-                    console.log("Failed to parse API answer:", parseError);
+                  } catch {
                     // If it's not valid JSON, maybe it's already an object
                     if (typeof finalRun.result.answer === "object") {
                       schedule = finalRun.result.answer;
@@ -754,18 +697,11 @@ export async function POST(request: NextRequest) {
 
                 // If run not succeeded, wait and retry
                 if (finalRun.status !== "succeeded") {
-                  console.log(
-                    `Run not succeeded, waiting... Status: ${finalRun.status}`
-                  );
                   await new Promise((resolve) => setTimeout(resolve, 2000));
                 } else {
                   break; // Run succeeded, no point retrying
                 }
-              } catch (apiError) {
-                console.log(
-                  `Attempt ${attempt + 1}: Failed to get final run:`,
-                  apiError
-                );
+              } catch {
                 await new Promise((resolve) => setTimeout(resolve, 1000));
               }
             }
@@ -773,17 +709,11 @@ export async function POST(request: NextRequest) {
 
           // Method 2: Try to extract from streamed content
           if (!schedule) {
-            console.log("Trying to extract schedule from streamed content...");
-            console.log("Content length:", fullContent.length);
             schedule = extractScheduleFromContent(fullContent);
-            if (schedule) {
-              console.log("Extracted schedule from content");
-            }
           }
 
           // Method 3: Create a minimal schedule structure from available info
           if (!schedule) {
-            console.log("Creating fallback schedule structure");
             schedule = {
               school: school.name,
               major: major,
@@ -798,53 +728,6 @@ export async function POST(request: NextRequest) {
             };
           }
 
-          // ========== DETAILED LOGGING: RAW SCHEDULE ==========
-          console.log("\n=== RAW SCHEDULE FROM API ===");
-          console.log(JSON.stringify(schedule, null, 2));
-
-          // Log each semester's course count before any processing
-          if (schedule.semesters && Array.isArray(schedule.semesters)) {
-            console.log("\n=== SEMESTERS BEFORE NORMALIZATION ===");
-            (
-              schedule.semesters as Array<{
-                term?: string;
-                type?: string;
-                courses?: Array<{
-                  code: string;
-                  name: string;
-                  credits: number;
-                  options?: string;
-                }>;
-                coopNumber?: number;
-                totalCredits?: number;
-              }>
-            ).forEach((s, i) => {
-              if (s.type === "academic") {
-                console.log(
-                  `  [${i}] ${s.term}: ${s.courses?.length || 0} courses, ${
-                    s.totalCredits || "N/A"
-                  } credits`
-                );
-                s.courses?.forEach((c, j) => {
-                  console.log(
-                    `      [${j}] ${c.code}: ${c.name} (${c.credits}cr)${
-                      c.options ? ` [OPTIONS: ${c.options}]` : ""
-                    }`
-                  );
-                });
-              } else if (s.type === "coop") {
-                console.log(`  [${i}] ${s.term}: CO-OP #${s.coopNumber}`);
-              } else {
-                console.log(`  [${i}] ${s.term}: UNKNOWN TYPE "${s.type}"`);
-              }
-            });
-          } else {
-            console.log(
-              "  semesters is not an array:",
-              typeof schedule.semesters
-            );
-          }
-
           // Check if semesters is a placeholder string (AI failed to complete)
           if (
             typeof schedule.semesters === "string" &&
@@ -853,9 +736,6 @@ export async function POST(request: NextRequest) {
               schedule.semesters.includes("To be filled") ||
               !schedule.semesters.trim().startsWith("["))
           ) {
-            console.log(
-              "ERROR: AI returned placeholder text instead of semester array"
-            );
             controller.enqueue(
               encoder.encode(
                 `data: ${JSON.stringify({
@@ -870,10 +750,6 @@ export async function POST(request: NextRequest) {
           }
 
           // NORMALIZE: Handle all edge cases (stringified JSON, markdown, missing fields)
-          console.log("\n=== NORMALIZING SCHEDULE ===");
-          console.log(`  semesters type: ${typeof schedule.semesters}`);
-          console.log(`  warnings type: ${typeof schedule.warnings}`);
-
           controller.enqueue(
             encoder.encode(
               `data: ${JSON.stringify({
@@ -885,35 +761,6 @@ export async function POST(request: NextRequest) {
           );
 
           const normalizedSchedule = normalizeSchedule(schedule);
-
-          console.log("\n=== AFTER normalizeSchedule ===");
-          console.log(
-            `  Total: ${normalizedSchedule.semesters.length} semesters, ${normalizedSchedule.totalCredits} credits`
-          );
-          normalizedSchedule.semesters.forEach((s, i) => {
-            if (s.type === "academic") {
-              console.log(
-                `  [${i}] ${s.term}: ${s.courses?.length || 0} courses, ${
-                  s.totalCredits || 0
-                } credits`
-              );
-              s.courses?.forEach((c, j) => {
-                const courseAny = c as {
-                  code: string;
-                  name: string;
-                  credits: number;
-                  options?: string;
-                };
-                console.log(
-                  `      [${j}] ${c.code}: ${c.name} (${c.credits}cr)${
-                    courseAny.options ? ` [OPTIONS: ${courseAny.options}]` : ""
-                  }`
-                );
-              });
-            } else {
-              console.log(`  [${i}] ${s.term}: CO-OP #${s.coopNumber}`);
-            }
-          });
 
           // Check if we got a valid schedule with actual semesters
           // In completion mode (transcriptData exists), we need to calculate remaining credits
@@ -928,10 +775,6 @@ export async function POST(request: NextRequest) {
             completedCredits = transcriptData.totalCompletedCredits + transcriptData.totalTransferCredits;
             const degreeCredits = extractedRequirements?.totalCreditsRequired || 128;
             remainingCredits = Math.max(0, degreeCredits - completedCredits);
-            console.log(
-              `  Completion mode: ${completedCredits} completed, ` +
-              `${remainingCredits} remaining of ${degreeCredits} total`
-            );
           }
           
           // Calculate minimum expected semesters based on remaining credits
@@ -947,7 +790,6 @@ export async function POST(request: NextRequest) {
           ) {
             if (!hasTranscriptData) {
               // No transcript data and no generated semesters - this is a real failure
-              console.log("ERROR: Schedule has no semesters after normalization");
               controller.enqueue(
                 encoder.encode(
                   `data: ${JSON.stringify({
@@ -961,7 +803,6 @@ export async function POST(request: NextRequest) {
               return;
             } else if (remainingCredits > 16) {
               // Student has significant credits remaining but no semesters generated - this is an error
-              console.log(`ERROR: No new semesters generated but student needs ${remainingCredits} more credits`);
               controller.enqueue(
                 encoder.encode(
                   `data: ${JSON.stringify({
@@ -975,7 +816,6 @@ export async function POST(request: NextRequest) {
               return;
             } else {
               // Student is near graduation (<=16 credits remaining), allow empty with warning
-              console.log("WARNING: No new semesters generated, but student is near graduation");
               normalizedSchedule.semesters = [];
               if (!normalizedSchedule.warnings) {
                 normalizedSchedule.warnings = [];
@@ -999,10 +839,6 @@ export async function POST(request: NextRequest) {
             : 4;
           
           if (academicSemesters.length < minSemesters) {
-            console.log(
-              `ERROR: Only ${academicSemesters.length} academic semesters ` +
-              `(min: ${minSemesters}, remaining credits: ${remainingCredits})`
-            );
             controller.enqueue(
               encoder.encode(
                 `data: ${JSON.stringify({
@@ -1020,10 +856,6 @@ export async function POST(request: NextRequest) {
             hasTranscriptData
           ) {
             // Add warning if fewer semesters than expected based on remaining credits
-            console.log(
-              `WARNING: Only ${academicSemesters.length} semesters ` +
-              `but expected ~${expectedRemainingSemesters} for ${remainingCredits} credits`
-            );
             if (!normalizedSchedule.warnings) {
               normalizedSchedule.warnings = [];
             }
@@ -1033,9 +865,6 @@ export async function POST(request: NextRequest) {
             );
           } else if (academicSemesters.length < 4 && !hasTranscriptData) {
             // Add warning if fewer than expected but still acceptable for freshman
-            console.log(
-              `WARNING: Only ${academicSemesters.length} academic semesters with courses`
-            );
             if (!normalizedSchedule.warnings) {
               normalizedSchedule.warnings = [];
             }
@@ -1045,8 +874,6 @@ export async function POST(request: NextRequest) {
           }
 
           // VALIDATE: Remove duplicates, flag placeholders, fix credit totals, trim excess electives
-          console.log("\n=== VALIDATING SCHEDULE ===");
-
           controller.enqueue(
             encoder.encode(
               `data: ${JSON.stringify({
@@ -1063,47 +890,7 @@ export async function POST(request: NextRequest) {
             trimExcessCredits: true,
           });
 
-          if (validationResult.stats.duplicatesRemoved > 0) {
-            console.log(
-              `  Removed ${validationResult.stats.duplicatesRemoved} duplicate courses`
-            );
-          }
-          if (validationResult.stats.placeholdersFound > 0) {
-            console.log(
-              `  Found ${validationResult.stats.placeholdersFound} placeholder courses`
-            );
-          }
-
           const finalSchedule = validationResult.schedule;
-
-          console.log("\n=== AFTER validateSchedule ===");
-          console.log(
-            `  AI-generated: ${finalSchedule.semesters.length} semesters, ${finalSchedule.totalCredits} credits`
-          );
-          finalSchedule.semesters.forEach((s, i) => {
-            if (s.type === "academic") {
-              console.log(
-                `  [${i}] ${s.term}: ${s.courses?.length || 0} courses, ${
-                  s.totalCredits || 0
-                } credits`
-              );
-              s.courses?.forEach((c, j) => {
-                const courseAny = c as {
-                  code: string;
-                  name: string;
-                  credits: number;
-                  options?: string;
-                };
-                console.log(
-                  `      [${j}] ${c.code}: ${c.name} (${c.credits}cr)${
-                    courseAny.options ? ` [OPTIONS: ${courseAny.options}]` : ""
-                  }`
-                );
-              });
-            } else {
-              console.log(`  [${i}] ${s.term}: CO-OP #${s.coopNumber}`);
-            }
-          });
 
           // ==================== MERGE COMPLETED SEMESTERS ====================
           // If we have transcript data, merge completed semesters and transfer credits
@@ -1120,11 +907,8 @@ export async function POST(request: NextRequest) {
           let mergedSchedule: ExtendedSchedule = finalSchedule;
           
           if (transcriptData && transcriptData.completedSemesters.length > 0) {
-            console.log("\n=== MERGING COMPLETED SEMESTERS ===");
-            
             // Convert completed semesters to schedule format
             const completedSemesters = convertToScheduleSemesters(transcriptData);
-            console.log(`  Adding ${completedSemesters.length} completed semesters`);
             
             // Mark AI-generated semesters as "planned"
             const plannedSemesters = finalSchedule.semesters.map((sem) => ({
@@ -1154,22 +938,7 @@ export async function POST(request: NextRequest) {
                 grade: c.grade,
               })),
             };
-            
-            console.log(`  Total semesters after merge: ${mergedSchedule.semesters.length}`);
-            console.log(`  Total credits: ${mergedSchedule.totalCredits}`);
-            console.log(`  Transfer credits: ${transcriptData.transferCredits.length} courses`);
           }
-
-          console.log("\n=== FINAL SCHEDULE ===");
-          console.log(
-            `  Total: ${mergedSchedule.semesters.length} semesters, ${mergedSchedule.totalCredits} credits`
-          );
-
-          console.log("\n=== SENDING COMPLETE EVENT ===");
-          console.log(
-            "Schedule JSON being sent:",
-            JSON.stringify(mergedSchedule).substring(0, 500) + "..."
-          );
 
           // Send validation complete update
           controller.enqueue(

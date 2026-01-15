@@ -14,25 +14,13 @@ interface SubconsciousToolRequest {
 }
 
 export async function POST(request: NextRequest) {
-  console.log("\n========================================");
-  console.log("=== TOOL: get-schedule called ===");
-  console.log("========================================");
-  console.log("Timestamp:", new Date().toISOString());
-  console.log("Origin:", request.headers.get("origin") || "unknown");
-  console.log(
-    "User-Agent:",
-    request.headers.get("user-agent")?.substring(0, 50) || "unknown"
-  );
-
   try {
     const body = (await request.json()) as SubconsciousToolRequest;
-    console.log("Request body:", JSON.stringify(body, null, 2));
 
     // Extract scheduleId from either Subconscious format or direct format
     const scheduleId = body.parameters?.scheduleId || body.scheduleId;
 
     if (!scheduleId) {
-      console.log("ERROR: scheduleId is required");
       return Response.json(
         { success: false, message: "scheduleId is required" },
         { status: 400 }
@@ -40,7 +28,6 @@ export async function POST(request: NextRequest) {
     }
 
     const schedule = await getSchedule(scheduleId);
-    console.log("Schedule found:", !!schedule);
 
     if (!schedule) {
       return Response.json(

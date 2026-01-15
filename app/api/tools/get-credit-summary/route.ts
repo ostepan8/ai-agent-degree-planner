@@ -14,13 +14,8 @@ interface SubconsciousToolRequest {
 }
 
 export async function POST(request: NextRequest) {
-  console.log('\n========================================');
-  console.log('=== TOOL: get-credit-summary called ===');
-  console.log('========================================');
-
   try {
     const body = (await request.json()) as SubconsciousToolRequest;
-    console.log('Request body:', JSON.stringify(body, null, 2));
 
     const scheduleId = body.parameters?.scheduleId || body.scheduleId;
 
@@ -96,8 +91,6 @@ export async function POST(request: NextRequest) {
         ? `${heaviestSemester.term} (${heaviestSemester.credits} credits)` 
         : 'N/A',
     };
-
-    console.log('Credit summary:', summary);
 
     // Very explicit message for the AI
     const actionMessage = canAddCourses 

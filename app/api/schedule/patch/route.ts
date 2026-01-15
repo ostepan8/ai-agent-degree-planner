@@ -116,9 +116,6 @@ export async function POST(request: NextRequest) {
     const body = (await request.json()) as PatchRequest;
     const { currentSchedule, editRequest } = body;
 
-    console.log("\n=== SCHEDULE PATCH REQUEST ===");
-    console.log("Edit request:", editRequest);
-
     if (!currentSchedule || !editRequest) {
       return new Response(
         JSON.stringify({
@@ -212,7 +209,6 @@ Return the complete updated schedule as JSON with the same structure:
             } else if (event.type === "done") {
               lastRunId = event.runId;
               streamCompleted = true;
-              console.log("Stream done. RunId:", lastRunId);
               controller.enqueue(
                 encoder.encode(
                   `data: ${JSON.stringify({
@@ -236,14 +232,6 @@ Return the complete updated schedule as JSON with the same structure:
             }
           }
 
-          console.log(
-            "Stream completed:",
-            streamCompleted,
-            "Content length:",
-            fullContent.length
-          );
-          console.log("Thoughts extracted:", lastSentThoughts.length);
-
           // Get the final result
           let patchedSchedule: SchedulePlan | null = null;
 
@@ -253,11 +241,6 @@ Return the complete updated schedule as JSON with the same structure:
             for (let attempt = 0; attempt < 3; attempt++) {
               try {
                 const finalRun = await client.get(lastRunId);
-                console.log(
-                  `Attempt ${attempt + 1}: status=${
-                    finalRun.status
-                  }, hasResult=${!!finalRun.result}`
-                );
 
                 if (finalRun.result?.answer) {
                   const answer =
@@ -267,7 +250,6 @@ Return the complete updated schedule as JSON with the same structure:
 
                   if (answer.school && answer.semesters) {
                     patchedSchedule = answer as SchedulePlan;
-                    console.log("Got schedule from API result");
                     break;
                   }
                 }
@@ -277,8 +259,7 @@ Return the complete updated schedule as JSON with the same structure:
                 } else {
                   break;
                 }
-              } catch (e) {
-                console.error(`Attempt ${attempt + 1} failed:`, e);
+              } catch {
                 await new Promise((resolve) => setTimeout(resolve, 1000));
               }
             }
@@ -286,13 +267,11 @@ Return the complete updated schedule as JSON with the same structure:
 
           // Fallback: extract from content
           if (!patchedSchedule) {
-            console.log("Trying to extract from content...");
             patchedSchedule = extractScheduleFromContent(fullContent);
           }
 
           // Final fallback: return original with warning
           if (!patchedSchedule) {
-            console.log("Using original schedule with warning");
             patchedSchedule = {
               ...currentSchedule,
               warnings: [

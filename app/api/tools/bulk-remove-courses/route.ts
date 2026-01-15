@@ -25,12 +25,8 @@ interface SubconsciousToolRequest {
 }
 
 export async function POST(request: NextRequest) {
-  console.log("\n========================================");
-  console.log("=== TOOL: bulk-remove-courses called ===");
-  console.log("========================================");
   try {
     const body = (await request.json()) as SubconsciousToolRequest;
-    console.log("Request body:", JSON.stringify(body, null, 2));
 
     // Extract from either Subconscious format or direct format
     const scheduleId = body.parameters?.scheduleId || body.scheduleId;
@@ -47,7 +43,6 @@ export async function POST(request: NextRequest) {
         .split(",")
         .map((code) => code.trim())
         .filter((code) => code.length > 0);
-      console.log("Parsed courseCodesStr:", courseCodes);
     }
 
     if (
@@ -145,15 +140,6 @@ export async function POST(request: NextRequest) {
 
     await updateSchedule(scheduleId, updatedSchedule, "bulk_remove_courses");
 
-    console.log(
-      `✅ SUCCESS: Removed ${
-        removedCourses.length
-      } course(s): ${removedCourses.join(", ")}`
-    );
-    if (notFound.length > 0) {
-      console.log(`⚠️ Not found: ${notFound.join(", ")}`);
-    }
-
     return Response.json({
       success: true,
       message: `Removed ${
@@ -165,7 +151,7 @@ export async function POST(request: NextRequest) {
       schedule: updatedSchedule,
     });
   } catch (error) {
-    console.error("❌ bulk-remove-courses error:", error);
+    console.error("bulk-remove-courses error:", error);
     return Response.json(
       {
         success: false,

@@ -14,13 +14,8 @@ interface SubconsciousToolRequest {
 }
 
 export async function POST(request: NextRequest) {
-  console.log('\n========================================');
-  console.log('=== TOOL: count-courses-by-type called ===');
-  console.log('========================================');
-
   try {
     const body = (await request.json()) as SubconsciousToolRequest;
-    console.log('Request body:', JSON.stringify(body, null, 2));
 
     const scheduleId = body.parameters?.scheduleId || body.scheduleId;
 
@@ -65,8 +60,6 @@ export async function POST(request: NextRequest) {
     const countString = sortedDepts
       .map(([dept, count]) => `${dept}: ${count}`)
       .join(', ');
-
-    console.log(`Found ${totalCourses} courses across ${sortedDepts.length} departments`);
 
     return Response.json({
       success: true,

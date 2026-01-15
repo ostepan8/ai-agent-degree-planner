@@ -23,13 +23,8 @@ interface FoundCourse {
 }
 
 export async function POST(request: NextRequest) {
-  console.log('\n========================================');
-  console.log('=== TOOL: find-courses-in-schedule called ===');
-  console.log('========================================');
-
   try {
     const body = (await request.json()) as SubconsciousToolRequest;
-    console.log('Request body:', JSON.stringify(body, null, 2));
 
     const scheduleId = body.parameters?.scheduleId || body.scheduleId;
     const searchTerm = body.parameters?.searchTerm || body.searchTerm;
@@ -83,8 +78,6 @@ export async function POST(request: NextRequest) {
     const resultString = foundCourses
       .map(c => `${c.code} (${c.name}) in ${c.term}`)
       .join('; ');
-
-    console.log(`Found ${foundCourses.length} courses matching "${searchTerm}"`);
 
     return Response.json({
       success: true,

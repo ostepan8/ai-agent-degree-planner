@@ -16,10 +16,8 @@ interface SubconsciousToolRequest {
 }
 
 export async function POST(request: NextRequest) {
-  console.log('\n=== TOOL: remove-course called ===');
   try {
     const body = (await request.json()) as SubconsciousToolRequest;
-    console.log('Body:', JSON.stringify(body));
     
     // Extract from either Subconscious format or direct format
     const scheduleId = body.parameters?.scheduleId || body.scheduleId;
@@ -33,16 +31,13 @@ export async function POST(request: NextRequest) {
     }
 
     const schedule = await getSchedule(scheduleId);
-    console.log('Schedule found:', !!schedule, 'ID:', scheduleId);
 
     if (!schedule) {
-      console.log('ERROR: Schedule not found for ID:', scheduleId);
       return Response.json(
         { success: false, message: 'Schedule not found or expired' },
         { status: 404 }
       );
     }
-    console.log('Schedule semesters count:', schedule.semesters?.length);
 
     // Normalize course code
     const normalizedCode = courseCode.toUpperCase().replace(/\s+/g, ' ').trim();

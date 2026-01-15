@@ -33,13 +33,8 @@ interface SubconsciousToolRequest {
 }
 
 export async function POST(request: NextRequest) {
-  console.log('\n========================================');
-  console.log('=== TOOL: fill-semester-to-credits called ===');
-  console.log('========================================');
-
   try {
     const body = (await request.json()) as SubconsciousToolRequest;
-    console.log('Request body:', JSON.stringify(body, null, 2));
 
     const scheduleId = body.parameters?.scheduleId || body.scheduleId;
     const term = body.parameters?.term || body.term;
@@ -139,7 +134,6 @@ export async function POST(request: NextRequest) {
     await updateSchedule(scheduleId, updatedSchedule, 'fill_semester_to_credits');
 
     const addedStr = addedCourses.map(c => `${c.code} (${c.credits}cr)`).join(', ');
-    console.log(`✅ SUCCESS: Added ${addedCourses.length} electives to ${term}: ${addedStr}`);
 
     return Response.json({
       success: true,

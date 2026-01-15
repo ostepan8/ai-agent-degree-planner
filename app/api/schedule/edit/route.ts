@@ -553,17 +553,6 @@ export async function POST(request: NextRequest) {
     const body = (await request.json()) as EditRequest;
     const { currentSchedule, editRequest, webSearchEnabled = false } = body;
 
-    console.log("\n========================================");
-    console.log("=== SCHEDULE EDIT REQUEST ===");
-    console.log("========================================");
-    console.log("Edit request:", editRequest);
-    console.log("Web search enabled:", webSearchEnabled);
-    console.log(
-      "Schedule has",
-      currentSchedule?.semesters?.length,
-      "semesters"
-    );
-
     if (!currentSchedule || !editRequest) {
       return new Response(
         JSON.stringify({
@@ -576,7 +565,6 @@ export async function POST(request: NextRequest) {
     // Generate schedule ID and store the schedule
     const scheduleId = generateScheduleId();
     await storeSchedule(scheduleId, currentSchedule);
-    console.log("Stored schedule with ID:", scheduleId);
 
     // Extract school context for personalized prompts
     const schoolName = currentSchedule.school || "the university";
@@ -593,15 +581,6 @@ export async function POST(request: NextRequest) {
     const isHonors = studentContext?.honors || false;
     const studyAbroad = studentContext?.studyAbroad;
 
-    console.log("Student context:", {
-      concentration,
-      minor,
-      combinedMajor,
-      catalogYear,
-      isHonors,
-      studyAbroad: studyAbroad?.planned ? studyAbroad.term : "none",
-    });
-
     // Determine base URL for tool callbacks
     // PRIORITY: 1) TUNNEL_URL env var, 2) forwarded headers, 3) host header
     const tunnelUrl = process.env.TUNNEL_URL;
@@ -613,33 +592,19 @@ export async function POST(request: NextRequest) {
     if (tunnelUrl) {
       // Use configured tunnel URL (ngrok, localtunnel, etc.)
       baseUrl = tunnelUrl;
-      console.log("✅ Using TUNNEL_URL:", baseUrl);
     } else if (forwardedHost) {
       // Behind a proxy (e.g., ngrok, Vercel)
       baseUrl = `${forwardedProto || "https"}://${forwardedHost}`;
     } else if (host.includes("localhost") || host.includes("127.0.0.1")) {
       // Local development - Subconscious CANNOT reach this!
       baseUrl = `http://${host}`;
-      console.log(
-        "⚠️  WARNING: Using localhost URL. Subconscious cloud cannot reach this!"
-      );
-      console.log("⚠️  Set TUNNEL_URL env var to your ngrok/localtunnel URL");
     } else {
       const protocol = host.includes("localhost") ? "http" : "https";
       baseUrl = `${protocol}://${host}`;
     }
 
-    console.log("Base URL for tools:", baseUrl);
-    console.log(
-      "All request headers:",
-      Object.fromEntries(request.headers.entries())
-    );
-
     // Build tool definitions
     const tools = buildToolDefinitions(baseUrl, scheduleId);
-
-    console.log("\n=== TOOL DEFINITIONS ===");
-    console.log(JSON.stringify(tools, null, 2));
 
     // Web search emphasis section when enabled
     const webSearchInstructions = webSearchEnabled
@@ -938,11 +903,6 @@ YOUR JOB IS NOT COMPLETE UNTIL YOU HAVE CALLED A TOOL TO IMPLEMENT THE USER'S RE
     const client = getSubconsciousClient();
     const encoder = new TextEncoder();
 
-    console.log("=== STARTING SUBCONSCIOUS STREAM ===");
-    console.log("Engine:", DEFAULT_ENGINE);
-    console.log("Instructions length:", instructions.length);
-    console.log("Tools count:", tools.length);
-
     const stream = new ReadableStream({
       async start(controller) {
         try {
@@ -957,7 +917,6 @@ YOUR JOB IS NOT COMPLETE UNTIL YOU HAVE CALLED A TOOL TO IMPLEMENT THE USER'S RE
             )
           );
 
-          console.log("Calling client.stream()...");
           // Cast tools - the SDK types don't match the actual API schema for function tools with URLs
           const agentStream = client.stream({
             engine: DEFAULT_ENGINE,
@@ -969,7 +928,6 @@ YOUR JOB IS NOT COMPLETE UNTIL YOU HAVE CALLED A TOOL TO IMPLEMENT THE USER'S RE
               ] as any,
             },
           });
-          console.log("Stream created, starting to iterate...");
 
           let fullContent = "";
           let lastSentThoughts: string[] = [];
@@ -982,9 +940,6 @@ YOUR JOB IS NOT COMPLETE UNTIL YOU HAVE CALLED A TOOL TO IMPLEMENT THE USER'S RE
             if (updateInfo && updateInfo.version > lastKnownVersion) {
               const latestSchedule = await getSchedule(scheduleId);
               if (latestSchedule) {
-                console.log(
-                  `✅ Schedule updated! Version ${lastKnownVersion} -> ${updateInfo.version} by ${updateInfo.tool}`
-                );
                 controller.enqueue(
                   encoder.encode(
                     `data: ${JSON.stringify({
@@ -1000,30 +955,11 @@ YOUR JOB IS NOT COMPLETE UNTIL YOU HAVE CALLED A TOOL TO IMPLEMENT THE USER'S RE
           };
 
           for await (const event of agentStream) {
-            // Log every event for debugging
-            console.log(`\n=== STREAM EVENT: ${event.type} ===`);
-            if (event.type === "delta") {
-              console.log("Delta content length:", event.content?.length || 0);
-            } else {
-              console.log(
-                "Event data:",
-                JSON.stringify(event).substring(0, 500)
-              );
-            }
-
             // Check for schedule updates on every event
             await checkForScheduleUpdate();
 
             if (event.type === "delta") {
               fullContent += event.content;
-
-              // Log content periodically for debugging
-              if (fullContent.length % 500 < 50) {
-                console.log(
-                  "Accumulated content preview:",
-                  fullContent.substring(Math.max(0, fullContent.length - 200))
-                );
-              }
 
               // Extract and send new thoughts
               const thoughts = extractThoughts(fullContent);
@@ -1032,7 +968,6 @@ YOUR JOB IS NOT COMPLETE UNTIL YOU HAVE CALLED A TOOL TO IMPLEMENT THE USER'S RE
               );
 
               for (const thought of newThoughts) {
-                console.log("Extracted thought:", thought.substring(0, 100));
                 controller.enqueue(
                   encoder.encode(
                     `data: ${JSON.stringify({ type: "thought", thought })}\n\n`
@@ -1046,7 +981,6 @@ YOUR JOB IS NOT COMPLETE UNTIL YOU HAVE CALLED A TOOL TO IMPLEMENT THE USER'S RE
               for (const tc of toolCalls) {
                 const key = `${tc.tool}:${JSON.stringify(tc.args)}`;
                 if (!lastSentToolCalls.includes(key)) {
-                  console.log("🔧 Detected tool call:", tc.tool);
                   controller.enqueue(
                     encoder.encode(
                       `data: ${JSON.stringify({
@@ -1062,7 +996,6 @@ YOUR JOB IS NOT COMPLETE UNTIL YOU HAVE CALLED A TOOL TO IMPLEMENT THE USER'S RE
             } else if (event.type === "done") {
               // Final check for any pending updates
               await checkForScheduleUpdate();
-              console.log("Stream done. RunId:", event.runId);
 
               controller.enqueue(
                 encoder.encode(
@@ -1073,7 +1006,7 @@ YOUR JOB IS NOT COMPLETE UNTIL YOU HAVE CALLED A TOOL TO IMPLEMENT THE USER'S RE
                 )
               );
             } else if (event.type === "error") {
-              console.error("❌ Stream error:", event.message);
+              console.error("Stream error:", event.message);
               controller.enqueue(
                 encoder.encode(
                   `data: ${JSON.stringify({
@@ -1084,27 +1017,7 @@ YOUR JOB IS NOT COMPLETE UNTIL YOU HAVE CALLED A TOOL TO IMPLEMENT THE USER'S RE
               );
               controller.close();
               return;
-            } else {
-              // Log unknown event types
-              console.log(
-                "⚠️ Unknown event type:",
-                (event as { type: string }).type
-              );
             }
-          }
-
-          // Log full accumulated content for debugging
-          console.log("\n=== FULL ACCUMULATED CONTENT ===");
-          console.log("Length:", fullContent.length);
-          console.log(
-            "Content (first 2000 chars):",
-            fullContent.substring(0, 2000)
-          );
-          if (fullContent.length > 2000) {
-            console.log(
-              "Content (last 1000 chars):",
-              fullContent.substring(fullContent.length - 1000)
-            );
           }
 
           // Get the final schedule from the store
@@ -1125,7 +1038,6 @@ YOUR JOB IS NOT COMPLETE UNTIL YOU HAVE CALLED A TOOL TO IMPLEMENT THE USER'S RE
 
           // Extract the AI's final answer/summary
           const aiAnswer = extractAnswer(fullContent);
-          console.log("AI Answer:", aiAnswer);
 
           // Send complete event with final schedule and AI's response
           controller.enqueue(

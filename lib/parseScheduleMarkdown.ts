@@ -243,7 +243,6 @@ function deduplicateCourses(semesters: ParsedSemester[]): {
       
       if (seenCodes.has(normalizedCode)) {
         duplicatesRemoved++
-        console.log(`[Normalize] Removed duplicate: ${course.code} in ${semester.term}`)
         continue
       }
       
@@ -305,7 +304,6 @@ export function normalizeSchedule(schedule: Record<string, unknown>): Normalized
       // If marked as coop but has courses, it's actually academic (AI mislabeled it)
       if (semType === 'coop') {
         if (hasCourses) {
-          console.log(`[Normalize] Semester "${sem.term}" marked as co-op but has courses, correcting to academic`)
           return { ...sem, type: 'academic' as const }
         }
         return { ...sem, type: 'coop' as const }
@@ -314,25 +312,18 @@ export function normalizeSchedule(schedule: Record<string, unknown>): Normalized
       } else {
         // Unknown type - check if it has courses (academic) or coopNumber (coop)
         if (hasCourses) {
-          console.log(`[Normalize] Unknown semester type "${sem.type}" with courses, treating as academic`)
           return { ...sem, type: 'academic' as const }
         } else if (hasCoopNumber) {
-          console.log(`[Normalize] Unknown semester type "${sem.type}" with coopNumber, treating as coop`)
           return { ...sem, type: 'coop' as const }
         }
         // Default to academic
-        console.log(`[Normalize] Unknown semester type "${sem.type}", defaulting to academic`)
         return { ...sem, type: 'academic' as const }
       }
     })
     
-    const { semesters: dedupedSemesters, duplicatesRemoved } = 
+    const { semesters: dedupedSemesters } = 
       deduplicateCourses(normalizedSemesters)
     normalized.semesters = dedupedSemesters
-    
-    if (duplicatesRemoved > 0) {
-      console.log(`[Normalize] Total duplicates removed: ${duplicatesRemoved}`)
-    }
   }
   
   // Handle stringified JSON warnings

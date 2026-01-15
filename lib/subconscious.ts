@@ -17,7 +17,6 @@ export function getSubconsciousClient(): Subconscious {
     const options: { apiKey: string; baseUrl?: string } = { apiKey };
     if (baseUrl) {
       options.baseUrl = baseUrl;
-      console.log("Using Subconscious API at:", baseUrl);
     }
 
     client = new Subconscious(options);

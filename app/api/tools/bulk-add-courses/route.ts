@@ -29,12 +29,8 @@ interface SubconsciousToolRequest {
 }
 
 export async function POST(request: NextRequest) {
-  console.log('\n========================================');
-  console.log('=== TOOL: bulk-add-courses called ===');
-  console.log('========================================');
   try {
     const body = (await request.json()) as SubconsciousToolRequest;
-    console.log('Request body:', JSON.stringify(body, null, 2));
 
     // Extract from either Subconscious format or direct format
     const scheduleId = body.parameters?.scheduleId || body.scheduleId;
@@ -47,7 +43,6 @@ export async function POST(request: NextRequest) {
     if (!courses && coursesJson) {
       try {
         courses = JSON.parse(coursesJson) as CourseToAdd[];
-        console.log('Parsed coursesJson:', courses);
       } catch (e) {
         return Response.json(
           { success: false, message: 'Invalid JSON in coursesJson: ' + (e instanceof Error ? e.message : 'Parse error') },
@@ -184,11 +179,6 @@ export async function POST(request: NextRequest) {
 
     await updateSchedule(scheduleId, updatedSchedule, 'bulk_add_courses');
 
-    console.log(`✅ SUCCESS: Added ${addedCourses.length} course(s): ${addedCourses.join(', ')}`);
-    if (errors.length > 0) {
-      console.log(`⚠️ Errors: ${errors.join(', ')}`);
-    }
-
     return Response.json({
       success: true,
       message: `Added ${addedCourses.length} course(s): ${addedCourses.join(', ')}`,
@@ -198,7 +188,7 @@ export async function POST(request: NextRequest) {
       schedule: updatedSchedule,
     });
   } catch (error) {
-    console.error('❌ bulk-add-courses error:', error);
+    console.error('bulk-add-courses error:', error);
     return Response.json(
       { success: false, message: error instanceof Error ? error.message : 'Unknown error' },
       { status: 500 }

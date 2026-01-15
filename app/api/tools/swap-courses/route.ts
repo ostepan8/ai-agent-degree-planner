@@ -17,22 +17,15 @@ interface SubconsciousToolRequest {
 }
 
 export async function POST(request: NextRequest) {
-  console.log('\n========================================');
-  console.log('=== TOOL: swap-courses called ===');
-  console.log('========================================');
   try {
     const body = (await request.json()) as SubconsciousToolRequest;
-    console.log('Request body:', JSON.stringify(body, null, 2));
     
     // Extract from either Subconscious format or direct format
     const scheduleId = body.parameters?.scheduleId || body.scheduleId;
     const courseCode1 = body.parameters?.courseCode1 || body.courseCode1;
     const courseCode2 = body.parameters?.courseCode2 || body.courseCode2;
 
-    console.log('Extracted params:', { scheduleId, courseCode1, courseCode2 });
-
     if (!scheduleId || !courseCode1 || !courseCode2) {
-      console.log('ERROR: Missing required params');
       return Response.json(
         { success: false, message: 'scheduleId, courseCode1, and courseCode2 are required' },
         { status: 400 }
@@ -40,7 +33,6 @@ export async function POST(request: NextRequest) {
     }
 
     const schedule = await getSchedule(scheduleId);
-    console.log('Schedule found:', !!schedule);
 
     if (!schedule) {
       return Response.json(
@@ -153,15 +145,13 @@ export async function POST(request: NextRequest) {
     const sem1Term = schedule.semesters[course1SemIndex].term;
     const sem2Term = schedule.semesters[course2SemIndex].term;
 
-    console.log(`✅ SUCCESS: Swapped "${courseCode1}" (${sem1Term}) with "${courseCode2}" (${sem2Term})`);
-
     return Response.json({
       success: true,
       message: `Swapped "${courseCode1}" (${sem1Term}) with "${courseCode2}" (${sem2Term})`,
       schedule: updatedSchedule,
     });
   } catch (error) {
-    console.error('❌ swap-courses error:', error);
+    console.error('swap-courses error:', error);
     return Response.json(
       { success: false, message: error instanceof Error ? error.message : 'Unknown error' },
       { status: 500 }

@@ -17,11 +17,8 @@ interface SubconsciousToolRequest {
 }
 
 export async function POST(request: NextRequest) {
-  console.log('\n=== TOOL: move-course called ===');
-  
   try {
     const body = (await request.json()) as SubconsciousToolRequest;
-    console.log('Body:', JSON.stringify(body));
     
     // Extract from either Subconscious format or direct format
     const scheduleId = body.parameters?.scheduleId || body.scheduleId;
@@ -29,7 +26,6 @@ export async function POST(request: NextRequest) {
     const toSemester = body.parameters?.toSemester || body.toSemester;
 
     if (!scheduleId || !courseCode || !toSemester) {
-      console.log('ERROR: Missing required fields');
       return Response.json(
         { success: false, message: 'scheduleId, courseCode, and toSemester are required' },
         { status: 400 }
@@ -37,7 +33,6 @@ export async function POST(request: NextRequest) {
     }
 
     const schedule = await getSchedule(scheduleId);
-    console.log('Schedule found:', !!schedule);
 
     if (!schedule) {
       return Response.json(

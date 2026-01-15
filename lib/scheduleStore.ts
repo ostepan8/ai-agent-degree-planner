@@ -20,7 +20,6 @@ declare global {
 function getSchedulesMap(): Map<string, StoredSchedule> {
   if (!globalThis[globalKey]) {
     globalThis[globalKey] = new Map<string, StoredSchedule>();
-    console.log('📦 Created in-memory schedule store (fallback mode)');
   }
   return globalThis[globalKey];
 }
@@ -77,8 +76,6 @@ export async function storeSchedule(
       console.error('Supabase storeSchedule error:', error);
       throw new Error(`Failed to store schedule: ${error.message}`);
     }
-    
-    console.log(`📦 Stored schedule ${id} in Supabase`);
   } else {
     // Fallback to in-memory
     const schedules = getSchedulesMap();
@@ -88,7 +85,6 @@ export async function storeSchedule(
       version: 1,
       lastModified: Date.now(),
     });
-    console.log(`📦 Stored schedule ${id} in memory (Supabase not configured)`);
   }
 }
 
@@ -106,7 +102,6 @@ export async function getSchedule(id: string): Promise<SchedulePlan | null> {
       .single();
     
     if (error || !data) {
-      console.log(`📦 Schedule ${id} not found in Supabase`);
       return null;
     }
     
@@ -114,7 +109,6 @@ export async function getSchedule(id: string): Promise<SchedulePlan | null> {
     if (new Date(data.expires_at) < new Date()) {
       // Delete expired schedule
       await supabase.from('schedules').delete().eq('id', id);
-      console.log(`📦 Schedule ${id} expired, deleted from Supabase`);
       return null;
     }
     
@@ -125,7 +119,6 @@ export async function getSchedule(id: string): Promise<SchedulePlan | null> {
     const stored = schedules.get(id);
     
     if (!stored) {
-      console.log(`📦 Schedule ${id} not found in memory`);
       return null;
     }
     
@@ -157,7 +150,6 @@ export async function updateSchedule(
       .single();
     
     if (!existing) {
-      console.log(`📦 Schedule ${id} not found for update`);
       return false;
     }
     
@@ -175,8 +167,6 @@ export async function updateSchedule(
       console.error('Supabase updateSchedule error:', error);
       return false;
     }
-    
-    console.log(`📦 Updated schedule ${id} to version ${existing.version + 1} by ${updatedBy || 'unknown'}`);
     return true;
   } else {
     // Fallback to in-memory
@@ -191,7 +181,6 @@ export async function updateSchedule(
     stored.version++;
     stored.lastModified = Date.now();
     stored.lastUpdatedBy = updatedBy;
-    console.log(`📦 Updated schedule ${id} to version ${stored.version} in memory`);
     return true;
   }
 }
